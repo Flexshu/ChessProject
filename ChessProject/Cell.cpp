@@ -1,8 +1,14 @@
-//
-//  Cell.cpp
-//  ChessProject
-//
-//  Created by Єгор on 02.06.2025.
-//
-
 #include "Cell.hpp"
+
+
+Cell::Cell() { 
+    name = "undefined";
+}
+
+Cell::Cell(string name) {
+    this->name = name;
+}
+
+string Cell::getName() const { 
+    return name;
+}

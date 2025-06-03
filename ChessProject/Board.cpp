@@ -13,19 +13,28 @@ Cell Board::getCell(int row, int col) const {
     return cells[row][col];
 }
 
-void Board::printBoard() const { 
+void Board::printBoard() const {
+    int row = 8;
     for (int i=0; i<8; i++) {
+        cout<<"  ";
         for (int j=0; j<8; j++) {
             cout<<"+---";
         }
         cout<<"+\n";
+        cout<<row - i<<" ";
         for (int j=0; j<8; j++) {
             cout<<"|   ";
         }
         cout<<"|\n";
     }
-    for (int j=0; j<8; j++) {
+    cout<<"  ";
+    for (int i=0; i<8; i++) {
         cout<<"+---";
     }
-    cout<<"+\n";
+    cout<<"+\n  ";
+    char file = 'a';
+    for (int i=0; i<8; i++) {
+        cout<<"  "<<char(file + i)<<" ";
+    }
+    cout<<endl;
 }
