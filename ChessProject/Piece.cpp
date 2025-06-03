@@ -2,19 +2,14 @@
 
 
 Piece::Piece() { 
-    content = 'X';
+    symbol = ' ';
     isPinned = false;
     canMove = false;
+    color = "undefined";
 }
 
-Piece::Piece(char content) { 
-    this->content = content;
-    isPinned = false;
-    canMove = false;
-}
-
-void Piece::setContent(char content) { 
-    this->content = content;
+void Piece::setSymbol(char symbol) {
+    this->symbol = symbol;
 }
 
 void Piece::setIsPinned(bool isPinned) { 
@@ -25,8 +20,12 @@ void Piece::setCanMove(bool canMove) {
     this->canMove = canMove;
 }
 
-char Piece::getContent() const { 
-    return content;
+void Piece::setColor(string color) {
+    this->color = color;
+}
+
+char Piece::getSymbol() const {
+    return symbol;
 }
 
 bool Piece::getIsPinned() const { 
@@ -36,3 +35,8 @@ bool Piece::getIsPinned() const {
 bool Piece::getCanMove() const { 
     return canMove;
 }
+
+string Piece::getColor() const { 
+    return color;
+}
+
