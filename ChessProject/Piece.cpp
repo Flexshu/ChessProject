@@ -1,11 +1,18 @@
 #include "Piece.hpp"
 
 
-Piece::Piece() { 
+Piece::Piece() {
     symbol = ' ';
     isPinned = false;
     canMove = false;
     color = "undefined";
+}
+
+Piece::Piece(bool isBlack) {
+    symbol = ' ';
+    isPinned = false;
+    canMove = false;
+    color = isBlack ? "black" : "white";
 }
 
 void Piece::setSymbol(char symbol) {

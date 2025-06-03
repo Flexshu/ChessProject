@@ -5,7 +5,7 @@
 
 class King : public Piece{
 public:
-    King();
+    King(bool isBlack);
     
     void calcAvailableCells();
 };

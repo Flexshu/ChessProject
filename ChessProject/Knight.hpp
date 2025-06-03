@@ -5,7 +5,7 @@
 
 class Knight : public Piece{
 public:
-    Knight();
+    Knight(bool isBlack);
     
     void calcAvailableCells();
 };

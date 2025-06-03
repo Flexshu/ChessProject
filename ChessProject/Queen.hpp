@@ -5,7 +5,7 @@
 
 class Queen : public Piece{
 public:
-    Queen();
+    Queen(bool isBlack);
     
     void calcAvailableCells();
 };

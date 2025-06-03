@@ -16,6 +16,7 @@ protected:
     
 public:
     Piece();
+    Piece(bool isBlack);
     
     void setSymbol(char symbol);
     void setIsPinned(bool isPinned);

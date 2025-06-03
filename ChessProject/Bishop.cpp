@@ -1,8 +1,8 @@
 #include "Bishop.hpp"
 
 
-Bishop::Bishop() { 
-    symbol = 'B';
+Bishop::Bishop(bool isBlack) : Piece(isBlack) { 
+    symbol = color == "white" ? 'B' : 'b';
 }
 
 void Bishop::calcAvailableCells() { 

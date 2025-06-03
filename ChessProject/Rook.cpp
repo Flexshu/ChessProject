@@ -1,8 +1,8 @@
 #include "Rook.hpp"
 
 
-Rook::Rook() { 
-    symbol = 'R';
+Rook::Rook(bool isBlack) : Piece(isBlack) { 
+    symbol = color == "white" ? 'R' : 'r';
 }
 
 void Rook::calcAvailableCells() { 

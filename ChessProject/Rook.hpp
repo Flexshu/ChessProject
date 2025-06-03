@@ -5,7 +5,7 @@
 
 class Rook : public Piece{
 public:
-    Rook();
+    Rook(bool isBlack);
     
     void calcAvailableCells();
 };

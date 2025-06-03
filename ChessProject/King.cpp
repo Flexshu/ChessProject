@@ -1,8 +1,8 @@
 #include "King.hpp"
 
 
-King::King() { 
-    symbol = 'K';
+King::King(bool isBlack) : Piece(isBlack) { 
+    symbol = color == "white" ? 'K' : 'k';
 }
 
 void King::calcAvailableCells() { 

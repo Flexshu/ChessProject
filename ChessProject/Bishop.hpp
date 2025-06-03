@@ -5,7 +5,7 @@
 
 class Bishop : public Piece{
 public:
-    Bishop();
+    Bishop(bool isBlack);
     
     void calcAvailableCells();
 };

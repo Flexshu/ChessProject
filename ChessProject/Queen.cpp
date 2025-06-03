@@ -1,8 +1,8 @@
 #include "Queen.hpp"
 
 
-Queen::Queen() { 
-    symbol = 'Q';
+Queen::Queen(bool isBlack) : Piece(isBlack) { 
+    symbol = color == "white" ? 'Q' : 'q';
 }
 
 void Queen::calcAvailableCells() { 

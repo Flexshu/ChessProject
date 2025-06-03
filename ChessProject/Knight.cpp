@@ -1,8 +1,8 @@
 #include "Knight.hpp"
 
 
-Knight::Knight() { 
-    symbol = 'N';
+Knight::Knight(bool isBlack) : Piece(isBlack) { 
+    symbol = color == "white" ? 'N' : 'n';
 }
 
 void Knight::calcAvailableCells() { 

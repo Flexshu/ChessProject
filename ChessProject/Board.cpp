@@ -11,29 +11,29 @@ Board::Board() {
     }
     for (int i=1; i<7; i+=5) {
         for (int j=0; j<8; j++) {
-            cells[i][j].setContent(new Pawn());
+            cells[i][j].setContent(new Pawn(i == 1));
         }
     }
     for (int i=0; i<8; i+=7) {
         for (int j=0; j<8; j+=7){
-            cells[i][j].setContent(new Rook());
+            cells[i][j].setContent(new Rook(i == 0));
         }
     }
     for (int i=0; i<8; i+=7) {
         for (int j=1; j<7; j+=5){
-            cells[i][j].setContent(new Knight());
+            cells[i][j].setContent(new Knight(i == 0));
         }
     }
     for (int i=0; i<8; i+=7) {
         for (int j=2; j<6; j+=3){
-            cells[i][j].setContent(new Bishop());
+            cells[i][j].setContent(new Bishop(i == 0));
         }
     }
     for (int i=0; i<8; i+=7) {
-        cells[i][3].setContent(new Queen());
+        cells[i][3].setContent(new Queen(i == 0));
     }
     for (int i=0; i<8; i+=7) {
-        cells[i][4].setContent(new King());
+        cells[i][4].setContent(new King(i == 0));
     }
 }
 
