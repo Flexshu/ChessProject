@@ -26,13 +26,4 @@ public:
     }
 };
 
-class EmptyCellException : public ChessException{
-    string cellName;
-    
-public:
-    EmptyCellException(string reason, string cellName) : ChessException(reason){this->cellName = cellName;}
-    
-    void printMessage() const override{cout<<"Cell "<<cellName<<" is "<<reason<<".\n";}
-};
-
 #endif

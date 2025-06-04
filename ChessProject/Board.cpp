@@ -99,15 +99,16 @@ void Board::makeMove() {
     for (int i=0; i<8; i++) {
         for (int j=0; j<8; j++) {
             if (cells[i][j].getName() == oldCell) {
-                if (cells[i][j].getContent() == nullptr) throw EmptyCellException("empty", oldCell);
+                if (cells[i][j].getContent() == nullptr) throw CellNameException("the chosen cell is empty", oldCell);
             }
         }
     }
     
-    cout<<"Pick a cell you want the piece to move to: ";
+    cout<<"Pick a cell you want to move the piece to: ";
     getline(cin, newCell);
     
     //checking newCell
+    if (newCell == oldCell) throw CellNameException("you can not move a piece to a square it is on", oldCell);
     if (newCell == "e0") endGame = true;
     if (newCell.size() != 2) throw CellNameException("name does not match the length", newCell);
     for (int i=0; i<8; i++) {
@@ -152,9 +153,6 @@ void Board::play() {
             this->makeMove();
         }
         catch (CellNameException e) {
-            e.printMessage();
-        }
-        catch (EmptyCellException e) {
             e.printMessage();
         }
     } while (!endGame);
