@@ -79,12 +79,44 @@ void Board::printBoard() const {
 
 void Board::makeMove() { 
     string oldCell, newCell;
+    bool exceptionChecker = false;
     cout<<"Pick a cell with a piece to move: ";
     getline(cin, oldCell);
+    
+    //checking oldCell
+    if (oldCell == "e0") endGame = true;
+    if (oldCell.size() != 2) throw CellNameException("does not match the length", oldCell);
+    for (int i=0; i<8; i++) {
+        if (oldCell[0] == char('a' + i)) exceptionChecker = true;
+    }
+    if (!exceptionChecker) throw CellNameException("the first symbol should be a letter from 'a' to 'h'", oldCell);
+    else exceptionChecker = false;
+    for (int i=0; i<8; i++) {
+        if (int(oldCell[1] - '0') == 1 + i) exceptionChecker = true;
+    }
+    if (!exceptionChecker) throw CellNameException("the second symbol should be a number from 1 to 8", oldCell);
+    else exceptionChecker = false;
+    
     cout<<"Pick a cell you want the piece to move to: ";
     getline(cin, newCell);
-    if (oldCell == "e0" || newCell == "e0") endGame = true;
+    
+    //checking newCell
+    if (newCell == "e0") endGame = true;
+    if (newCell.size() != 2) throw CellNameException("does not match the length", newCell);
+    for (int i=0; i<8; i++) {
+        if (newCell[0] == char('a' + i)) exceptionChecker = true;
+    }
+    if (!exceptionChecker) throw CellNameException("the first symbol should be a letter from 'a' to 'h'", newCell);
+    else exceptionChecker = false;
+    for (int i=0; i<8; i++) {
+        if (int(newCell[1] - '0') == 1 + i) exceptionChecker = true;
+    }
+    if (!exceptionChecker) throw CellNameException("the second symbol should be a number from 1 to 8", newCell);
+    else exceptionChecker = false;
+    
     bool found = false;
+    
+    //making a move
     for (int i=0; i<8; i++) {
         if (found) break;
         for (int j=0; j<8; j++) {
@@ -108,8 +140,12 @@ void Board::makeMove() {
 
 void Board::play() { 
     do {
-        this->printBoard();
-        this->makeMove();
+        try {
+            this->printBoard();
+            this->makeMove();
+        }
+        catch (CellNameException e) {
+            e.printMessage();
+        }
     } while (!endGame);
 }
-

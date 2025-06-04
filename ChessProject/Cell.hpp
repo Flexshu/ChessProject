@@ -7,6 +7,7 @@
 #include "Bishop.hpp"
 #include "Queen.hpp"
 #include "King.hpp"
+#include "ChessException.h"
 using namespace std;
 
 class Cell{

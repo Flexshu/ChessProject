@@ -1,0 +1,29 @@
+#ifndef ChessException_h
+#define ChessException_h
+
+#include <iostream>
+#include <string>
+using namespace std;
+
+class ChessException{
+protected:
+    string reason;
+    
+public:
+    ChessException(string reason){this->reason = reason;}
+    
+    virtual void printMessage() const = 0;
+};
+
+class CellNameException : public ChessException{
+    string cellName;
+    
+public:
+    CellNameException(string reason, string cellName) : ChessException(reason){this->cellName = cellName;}
+    
+    void printMessage() const override{
+        cout<<"Name \""<<cellName<<"\" is not available: "<<reason<<".\n";
+    }
+};
+
+#endif
