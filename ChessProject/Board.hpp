@@ -6,6 +6,7 @@
 class Board{
     vector<vector<Cell>> cells;
     bool endGame;
+    bool turn;
     
 public:
     Board();

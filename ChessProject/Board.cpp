@@ -4,6 +4,7 @@
 Board::Board() { 
     cells = vector<vector<Cell>>(8, vector<Cell>(8, Cell()));
     endGame = false;
+    turn = 1;
     for (int i=0; i<8; i++) {
         for (int j=0; j<8; j++) {
             cells[i][j].setName(char('a' + j) + to_string(8 - i));
@@ -100,6 +101,12 @@ void Board::makeMove() {
         for (int j=0; j<8; j++) {
             if (cells[i][j].getName() == oldCell) {
                 if (cells[i][j].getContent() == nullptr) throw CellNameException("the chosen cell is empty", oldCell);
+                if (turn) {
+                    if (cells[i][j].getContent()->getColor() == "black") throw CellNameException("it is white to move", oldCell);
+                }
+                else {
+                    if (cells[i][j].getContent()->getColor() == "white") throw CellNameException("it is black to move", oldCell);
+                }
             }
         }
     }
@@ -121,6 +128,20 @@ void Board::makeMove() {
     }
     if (!exceptionChecker) throw CellNameException("the second symbol should be a number from 1 to 8", newCell);
     else exceptionChecker = false;
+    for (int i=0; i<8; i++) {
+        for (int j=0; j<8; j++) {
+            if (cells[i][j].getName() == newCell) {
+                if (cells[i][j].getContent() != nullptr) {
+                    if (turn) {
+                        if (cells[i][j].getContent()->getColor() == "white") throw CellNameException("you can not take the same-colored piece", newCell);
+                    }
+                    else {
+                        if (cells[i][j].getContent()->getColor() == "black") throw CellNameException("you can not take the same-colored piece", newCell);
+                    }
+                }
+            }
+        }
+    }
     
     bool found = false;
     
@@ -144,6 +165,7 @@ void Board::makeMove() {
             }
         }
     }
+    turn = !turn;
 }
 
 void Board::play() { 
