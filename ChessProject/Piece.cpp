@@ -19,6 +19,10 @@ void Piece::setSymbol(char symbol) {
     this->symbol = symbol;
 }
 
+void Piece::setAvailableCells(vector<string> availableCells) {
+    this->availableCells = availableCells;
+}
+
 void Piece::setIsPinned(bool isPinned) { 
     this->isPinned = isPinned;
 }
@@ -35,6 +39,10 @@ char Piece::getSymbol() const {
     return symbol;
 }
 
+vector<string> Piece::getAvailableCells() const {
+    return availableCells;
+}
+
 bool Piece::getIsPinned() const { 
     return isPinned;
 }
@@ -46,4 +54,3 @@ bool Piece::getCanMove() const {
 string Piece::getColor() const { 
     return color;
 }
-

@@ -62,6 +62,91 @@ void Board::calcAvailableCells(string cellName) const {
     vector<string> availableCells;
     int row = findCell(cellName) / 10;
     int col = findCell(cellName) % 10;
+    if (tolower(cells[row][col].getContent()->getSymbol()) == 'n') {
+        for (int i=-2; i<3; i+=4) {
+            for (int j=-1; j<2; j+=2) {
+                char c1 = char(cells[row][col].getName()[0] + i);
+                int i1 = int(cells[row][col].getName()[1] - '0' + j);
+                char c2 = char(cells[row][col].getName()[0] + j);
+                int i2 = int(cells[row][col].getName()[1] - '0' + i);
+                if (c1 >= 'a' && c1 <= 'h' && i1 >= 1 && i1 <= 8) availableCells.push_back(string(1, c1) + to_string(i1));
+                if (c2 >= 'a' && c2 <= 'h' && i2 >= 1 && i2 <= 8) availableCells.push_back(string(1, c2) + to_string(i2));
+            }
+        }
+    }
+    else {availableCells = vector<string>(1, "o0");}
+    cells[row][col].getContent()->setAvailableCells(availableCells);
+}
+
+void Board::checkLength(string cellName) const {
+    if (cellName.size() != 2) throw CellNameException("does not match the length", cellName);
+}
+
+void Board::checkFirstSymbol(string cellName) const {
+    bool exceptionChecker = false;
+    for (int i=0; i<8; i++) {
+        if (cellName[0] == char('a' + i)) exceptionChecker = true;
+    }
+    if (!exceptionChecker) throw CellNameException("the first symbol should be a letter from 'a' to 'h'", cellName);
+}
+
+void Board::checkSecondSymbol(string cellName) const {
+    bool exceptionChecker = false;
+    for (int i=0; i<8; i++) {
+        if (int(cellName[1] - '0') == 1 + i) exceptionChecker = true;
+    }
+    if (!exceptionChecker) throw CellNameException("the second symbol should be a number from 1 to 8", cellName);
+}
+
+void Board::checkEmptiness(string cellName) const {
+    int row = findCell(cellName) / 10;
+    int col = findCell(cellName) % 10;
+    if (cells[row][col].getContent() == nullptr) throw OptionException("the chosen cell is empty", cellName);
+}
+
+void Board::checkTurn(string cellName) const {
+    int row = findCell(cellName) / 10;
+    int col = findCell(cellName) % 10;
+    if (turn) {
+        if (cells[row][col].getContent()->getColor() == "black") throw OptionException("it is white to move", cellName);
+    }
+    else {
+        if (cells[row][col].getContent()->getColor() == "white") throw OptionException("it is black to move", cellName);
+    }
+}
+
+void Board::checkSameColorness(string cellName) const {
+    int row = findCell(cellName) / 10;
+    int col = findCell(cellName) % 10;
+    if (cells[row][col].getContent() != nullptr) {
+        if (turn) {
+            if (cells[row][col].getContent()->getColor() == "white") throw OptionException("you can not take the same-colored piece", cellName);
+        }
+        else {
+            if (cells[row][col].getContent()->getColor() == "black") throw OptionException("you can not take the same-colored piece", cellName);
+        }
+    }
+}
+
+void Board::checkSameCell(string cellName1, string cellName2) const {
+    if (cellName1 == cellName2) throw OptionException("you can not move a piece to a square it is on", cellName2);
+}
+
+void Board::checkMoveLegility(string cellName1, string cellName2) const {
+    bool exceptionChecker = false;
+    int row = findCell(cellName1) / 10;
+    int col = findCell(cellName1) % 10;
+    calcAvailableCells(cellName1);
+    if (cells[row][col].getContent()->getAvailableCells()[0] != "o0") {
+        for (int i=0; i<cells[row][col].getContent()->getAvailableCells().size(); i++) {
+            if (cells[row][col].getContent()->getAvailableCells()[i] == cellName2) {exceptionChecker = true;}
+        }
+        if (!exceptionChecker) throw MoveException("pieces do not move so", cellName1, cellName2, cells[row][col].getContent()->getSymbol());
+    }
+}
+
+void Board::checkEndGame(string cellName) {
+    if (cellName == "e0") endGame = true;
 }
 
 void Board::printBoard() const {
@@ -97,83 +182,33 @@ void Board::printBoard() const {
 
 void Board::makeMove() { 
     string oldCell, newCell;
-    bool exceptionChecker = false;
     cout<<"Pick a cell with a piece to move: ";
     getline(cin, oldCell);
     
-    //checking oldCell
-    if (oldCell == "e0") endGame = true;
-    if (oldCell.size() != 2) throw CellNameException("does not match the length", oldCell);
-    for (int i=0; i<8; i++) {
-        if (oldCell[0] == char('a' + i)) exceptionChecker = true;
-    }
-    if (!exceptionChecker) throw CellNameException("the first symbol should be a letter from 'a' to 'h'", oldCell);
-    else exceptionChecker = false;
-    for (int i=0; i<8; i++) {
-        if (int(oldCell[1] - '0') == 1 + i) exceptionChecker = true;
-    }
-    if (!exceptionChecker) throw CellNameException("the second symbol should be a number from 1 to 8", oldCell);
-    else exceptionChecker = false;
-    int row = findCell(oldCell) / 10;
-    int col = findCell(oldCell) % 10;
-    if (cells[row][col].getContent() == nullptr) throw OptionException("the chosen cell is empty", oldCell);
-    if (turn) {
-        if (cells[row][col].getContent()->getColor() == "black") throw OptionException("it is white to move", oldCell);
-    }
-    else {
-        if (cells[row][col].getContent()->getColor() == "white") throw OptionException("it is black to move", oldCell);
-    }
+    checkEndGame(oldCell);
+    checkLength(oldCell);
+    checkFirstSymbol(oldCell);
+    checkSecondSymbol(oldCell);
+    checkEmptiness(oldCell);
+    checkTurn(oldCell);
     
     cout<<"Pick a cell you want to move the piece to: ";
     getline(cin, newCell);
     
-    //checking newCell
-    if (newCell == oldCell) throw OptionException("you can not move a piece to a square it is on", newCell);
-    if (newCell == "e0") endGame = true;
-    if (newCell.size() != 2) throw CellNameException("name does not match the length", newCell);
-    for (int i=0; i<8; i++) {
-        if (newCell[0] == char('a' + i)) exceptionChecker = true;
-    }
-    if (!exceptionChecker) throw CellNameException("the first symbol should be a letter from 'a' to 'h'", newCell);
-    else exceptionChecker = false;
-    for (int i=0; i<8; i++) {
-        if (int(newCell[1] - '0') == 1 + i) exceptionChecker = true;
-    }
-    if (!exceptionChecker) throw CellNameException("the second symbol should be a number from 1 to 8", newCell);
-    else exceptionChecker = false;
-    row = findCell(newCell) / 10;
-    col = findCell(newCell) % 10;
-    if (cells[row][col].getContent() != nullptr) {
-        if (turn) {
-            if (cells[row][col].getContent()->getColor() == "white") throw CellNameException("you can not take the same-colored piece", newCell);
-        }
-        else {
-            if (cells[row][col].getContent()->getColor() == "black") throw CellNameException("you can not take the same-colored piece", newCell);
-        }
-    }
+    checkSameCell(oldCell, newCell);
+    checkEndGame(newCell);
+    checkLength(newCell);
+    checkFirstSymbol(newCell);
+    checkSecondSymbol(newCell);
+    checkSameColorness(newCell);
+    checkMoveLegility(oldCell, newCell);
     
-    bool found = false;
-    
-    //making a move
-    for (int i=0; i<8; i++) {
-        if (found) break;
-        for (int j=0; j<8; j++) {
-            if (cells[i][j].getName() == oldCell) {
-                for (int t=0; t<8; t++) {
-                    if (found) break;
-                    for (int f=0; f<8; f++) {
-                        if (cells[t][f].getName() == newCell) {
-                            cells[t][f].setContent(cells[i][j].getContent());
-                            cells[i][j].setContent(nullptr);
-                            found = true;
-                            break;
-                        }
-                    }
-                }
-                break;
-            }
-        }
-    }
+    int row1 = findCell(oldCell) / 10;
+    int col1 = findCell(oldCell) % 10;
+    int row2 = findCell(newCell) / 10;
+    int col2 = findCell(newCell) % 10;
+    cells[row2][col2].setContent(cells[row1][col1].getContent());
+    cells[row1][col1].setContent(nullptr);
     turn = !turn;
 }
 
@@ -183,11 +218,8 @@ void Board::play() {
             this->printBoard();
             this->makeMove();
         }
-        catch (CellNameException e) {
-            e.printMessage();
-        }
-        catch (OptionException e){
-            e.printMessage();
-        }
+        catch (CellNameException e) {e.printMessage();}
+        catch (OptionException e){e.printMessage();}
+        catch (MoveException e){e.printMessage();}
     } while (!endGame);
 }

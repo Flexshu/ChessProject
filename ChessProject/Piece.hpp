@@ -19,11 +19,13 @@ public:
     Piece(bool isBlack);
     
     void setSymbol(char symbol);
+    void setAvailableCells(vector<string> availableCells);
     void setIsPinned(bool isPinned);
     void setCanMove(bool canMove);
     void setColor(string color);
     
     char getSymbol() const;
+    vector<string> getAvailableCells() const;
     bool getIsPinned() const;
     bool getCanMove() const;
     string getColor() const;

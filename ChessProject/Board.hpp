@@ -1,7 +1,6 @@
 #ifndef Board_hpp
 #define Board_hpp
 
-#include <cctype>
 #include "Cell.hpp"
 
 class Board{
@@ -17,6 +16,16 @@ public:
     
     int findCell(string cellName) const;
     void calcAvailableCells(string cellName) const;
+    
+    void checkLength(string cellName) const;
+    void checkFirstSymbol(string cellName) const;
+    void checkSecondSymbol(string cellName) const;
+    void checkEmptiness(string cellName) const;
+    void checkTurn(string cellName) const;
+    void checkSameColorness(string cellName) const;
+    void checkSameCell(string cellName1, string cellName2) const;
+    void checkMoveLegility(string cellName1, string cellName2) const;
+    void checkEndGame(string cellName);
     
     void printBoard() const;
     void makeMove();
