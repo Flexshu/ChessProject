@@ -1,6 +1,7 @@
 #ifndef Board_hpp
 #define Board_hpp
 
+#include <cctype>
 #include "Cell.hpp"
 
 class Board{
@@ -13,6 +14,9 @@ public:
     
     void setCell(int row, int col, Cell cell);
     Cell getCell(int row, int col) const;
+    
+    int findCell(string cellName) const;
+    void calcAvailableCells(string cellName) const;
     
     void printBoard() const;
     void makeMove();

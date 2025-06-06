@@ -22,7 +22,18 @@ public:
     CellNameException(string reason, string cellName) : ChessException(reason){this->cellName = cellName;}
     
     void printMessage() const override{
-        if (cellName != "e0") cout<<"Name \""<<cellName<<"\" is not available: "<<reason<<".\n";
+        if (cellName != "e0") cout<<"The name \""<<cellName<<"\" is not available: "<<reason<<".\n";
+    }
+};
+
+class OptionException : public ChessException{
+    string cellName;
+    
+public:
+    OptionException(string reason, string cellName) : ChessException(reason){this->cellName = cellName;}
+    
+    void printMessage() const override{
+        cout<<"You can't choose the cell \""<<cellName<<"\": "<<reason<<".\n";
     }
 };
 

@@ -27,8 +27,6 @@ public:
     bool getIsPinned() const;
     bool getCanMove() const;
     string getColor() const;
-    
-    virtual void calcAvailableCells() = 0;
 };
 
 #endif
