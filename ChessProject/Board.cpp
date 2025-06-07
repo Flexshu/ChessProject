@@ -197,6 +197,124 @@ void Board::calcAvailableCells(string cellName) const {
             availableCells.push_back(string(1, c) + to_string(n));
         }
     }
+    else if (tolower(cells[row][col].getContent()->getSymbol()) == 'q') {
+        for (int i=1; i<8; i++) {
+            if (col + i > 7) break;
+            if (isSameColored(row, col, row, col + i)) break;
+            if (isOppositeColored(row, col, row, col + i)){
+                char c = char(cells[row][col].getName()[0] + i);
+                int n = cells[row][col].getName()[1] - '0';
+                availableCells.push_back(string(1, c) + to_string(n));
+                break;
+            }
+            char c = char(cells[row][col].getName()[0] + i);
+            int n = cells[row][col].getName()[1] - '0';
+            availableCells.push_back(string(1, c) + to_string(n));
+        }
+        for (int i=1; i<8; i++) {
+            if (col - i < 0) break;
+            if (isSameColored(row, col, row, col - i)) break;
+            if (isOppositeColored(row, col, row, col - i)){
+                char c = char(cells[row][col].getName()[0] - i);
+                int n = cells[row][col].getName()[1] - '0';
+                availableCells.push_back(string(1, c) + to_string(n));
+                break;
+            }
+            char c = char(cells[row][col].getName()[0] - i);
+            int n = cells[row][col].getName()[1] - '0';
+            availableCells.push_back(string(1, c) + to_string(n));
+        }
+        for (int i=1; i<8; i++) {
+            if (row + i > 7) break;
+            if (isSameColored(row, col, row + i, col)) break;
+            if (isOppositeColored(row, col, row + i, col)){
+                char c = char(cells[row][col].getName()[0]);
+                int n = cells[row][col].getName()[1] - '0' - i;
+                availableCells.push_back(string(1, c) + to_string(n));
+                break;
+            }
+            char c = char(cells[row][col].getName()[0]);
+            int n = cells[row][col].getName()[1] - '0' - i;
+            availableCells.push_back(string(1, c) + to_string(n));
+        }
+        for (int i=1; i<8; i++) {
+            if (row - i < 0) break;
+            if (isSameColored(row, col, row - i, col)) break;
+            if (isOppositeColored(row, col, row - i, col)){
+                char c = char(cells[row][col].getName()[0]);
+                int n = cells[row][col].getName()[1] - '0' + i;
+                availableCells.push_back(string(1, c) + to_string(n));
+                break;
+            }
+            char c = char(cells[row][col].getName()[0]);
+            int n = cells[row][col].getName()[1] - '0' + i;
+            availableCells.push_back(string(1, c) + to_string(n));
+        }
+        for (int i=1; i<8; i++) {
+            if (col + i > 7 || row + i > 7) break;
+            if (isSameColored(row, col, row + i, col + i)) break;
+            if (isOppositeColored(row, col, row + i, col + i)){
+                char c = char(cells[row][col].getName()[0] + i);
+                int n = cells[row][col].getName()[1] - '0' - i;
+                availableCells.push_back(string(1, c) + to_string(n));
+                break;
+            }
+            char c = char(cells[row][col].getName()[0] + i);
+            int n = cells[row][col].getName()[1] - '0' - i;
+            availableCells.push_back(string(1, c) + to_string(n));
+        }
+        for (int i=1; i<8; i++) {
+            if (col + i > 7 || row - i < 0) break;
+            if (isSameColored(row, col, row - i, col + i)) break;
+            if (isOppositeColored(row, col, row - i, col + i)){
+                char c = char(cells[row][col].getName()[0] + i);
+                int n = cells[row][col].getName()[1] - '0' + i;
+                availableCells.push_back(string(1, c) + to_string(n));
+                break;
+            }
+            char c = char(cells[row][col].getName()[0] + i);
+            int n = cells[row][col].getName()[1] - '0' + i;
+            availableCells.push_back(string(1, c) + to_string(n));
+        }
+        for (int i=1; i<8; i++) {
+            if (col - i < 0 || row + i > 7) break;
+            if (isSameColored(row, col, row + i, col - i)) break;
+            if (isOppositeColored(row, col, row + i, col - i)){
+                char c = char(cells[row][col].getName()[0] - i);
+                int n = cells[row][col].getName()[1] - '0' - i;
+                availableCells.push_back(string(1, c) + to_string(n));
+                break;
+            }
+            char c = char(cells[row][col].getName()[0] - i);
+            int n = cells[row][col].getName()[1] - '0' - i;
+            availableCells.push_back(string(1, c) + to_string(n));
+        }
+        for (int i=1; i<8; i++) {
+            if (col - i < 0 || row - i < 0) break;
+            if (isSameColored(row, col, row - i, col - i)) break;
+            if (isOppositeColored(row, col, row - i, col - i)){
+                char c = char(cells[row][col].getName()[0] - i);
+                int n = cells[row][col].getName()[1] - '0' + i;
+                availableCells.push_back(string(1, c) + to_string(n));
+                break;
+            }
+            char c = char(cells[row][col].getName()[0] - i);
+            int n = cells[row][col].getName()[1] - '0' + i;
+            availableCells.push_back(string(1, c) + to_string(n));
+        }
+    }
+    else if (tolower(cells[row][col].getContent()->getSymbol()) == 'k') {
+        for (int i=-1; i<2; i++) {
+            for (int j=-1; j<2; j++) {
+                char c = char(cells[row][col].getName()[0] + i);
+                int n = cells[row][col].getName()[1] - '0' + j;
+                if (c >= 'a' && c <= 'h' && n >= 1 && n <= 8) availableCells.push_back(string(1, c) + to_string(n));
+            }
+        }
+    }
+//    else if (tolower(cells[row][col].getContent()->getSymbol()) == 'p') {
+//        
+//    }
     else availableCells = vector<string>(1, "o0");
     cells[row][col].getContent()->setAvailableCells(availableCells);
 //    for (int i=0; i<cells[row][col].getContent()->getAvailableCells().size(); i++) {
