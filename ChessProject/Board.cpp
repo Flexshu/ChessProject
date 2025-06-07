@@ -73,6 +73,22 @@ bool Board::isOppositeColored(int row1, int col1, int row2, int col2) const {
     else return false;
 }
 
+void Board::shootRay(vector<string> &availableCells, int a, int b, int row, int col) const {
+    for (int i=1; i<8; i++) {
+        if (row + i * b > 7 || row + i * b < 0 || col + i * a > 7 || col + i * a < 0) break;
+        if (isSameColored(row, col, row + i * b, col + i * a)) break;
+        if (isOppositeColored(row, col, row + i * b, col + i * a)){
+        char c = char(cells[row][col].getName()[0] + i * a);
+        int n = cells[row][col].getName()[1] - '0' - i * b;
+        availableCells.push_back(string(1, c) + to_string(n));
+            break;
+        }
+        char c = char(cells[row][col].getName()[0] + i * a);
+        int n = cells[row][col].getName()[1] - '0' - i * b;
+        availableCells.push_back(string(1, c) + to_string(n));
+    }
+}
+
 void Board::calcAvailableCells(string cellName) const {
     vector<string> availableCells;
     int row = findCell(cellName) / 10;
@@ -90,218 +106,26 @@ void Board::calcAvailableCells(string cellName) const {
         }
     }
     else if (tolower(cells[row][col].getContent()->getSymbol()) == 'r') {
-        for (int i=1; i<8; i++) {
-            if (col + i > 7) break;
-            if (isSameColored(row, col, row, col + i)) break;
-            if (isOppositeColored(row, col, row, col + i)){
-                char c = char(cells[row][col].getName()[0] + i);
-                int n = cells[row][col].getName()[1] - '0';
-                availableCells.push_back(string(1, c) + to_string(n));
-                break;
-            }
-            char c = char(cells[row][col].getName()[0] + i);
-            int n = cells[row][col].getName()[1] - '0';
-            availableCells.push_back(string(1, c) + to_string(n));
-        }
-        for (int i=1; i<8; i++) {
-            if (col - i < 0) break;
-            if (isSameColored(row, col, row, col - i)) break;
-            if (isOppositeColored(row, col, row, col - i)){
-                char c = char(cells[row][col].getName()[0] - i);
-                int n = cells[row][col].getName()[1] - '0';
-                availableCells.push_back(string(1, c) + to_string(n));
-                break;
-            }
-            char c = char(cells[row][col].getName()[0] - i);
-            int n = cells[row][col].getName()[1] - '0';
-            availableCells.push_back(string(1, c) + to_string(n));
-        }
-        for (int i=1; i<8; i++) {
-            if (row + i > 7) break;
-            if (isSameColored(row, col, row + i, col)) break;
-            if (isOppositeColored(row, col, row + i, col)){
-                char c = char(cells[row][col].getName()[0]);
-                int n = cells[row][col].getName()[1] - '0' - i;
-                availableCells.push_back(string(1, c) + to_string(n));
-                break;
-            }
-            char c = char(cells[row][col].getName()[0]);
-            int n = cells[row][col].getName()[1] - '0' - i;
-            availableCells.push_back(string(1, c) + to_string(n));
-        }
-        for (int i=1; i<8; i++) {
-            if (row - i < 0) break;
-            if (isSameColored(row, col, row - i, col)) break;
-            if (isOppositeColored(row, col, row - i, col)){
-                char c = char(cells[row][col].getName()[0]);
-                int n = cells[row][col].getName()[1] - '0' + i;
-                availableCells.push_back(string(1, c) + to_string(n));
-                break;
-            }
-            char c = char(cells[row][col].getName()[0]);
-            int n = cells[row][col].getName()[1] - '0' + i;
-            availableCells.push_back(string(1, c) + to_string(n));
-        }
+        shootRay(availableCells, 0, 1, row, col);
+        shootRay(availableCells, 0, -1, row, col);
+        shootRay(availableCells, 1, 0, row, col);
+        shootRay(availableCells, -1, 0, row, col);
     }
     else if (tolower(cells[row][col].getContent()->getSymbol()) == 'b') {
-        for (int i=1; i<8; i++) {
-            if (col + i > 7 || row + i > 7) break;
-            if (isSameColored(row, col, row + i, col + i)) break;
-            if (isOppositeColored(row, col, row + i, col + i)){
-                char c = char(cells[row][col].getName()[0] + i);
-                int n = cells[row][col].getName()[1] - '0' - i;
-                availableCells.push_back(string(1, c) + to_string(n));
-                break;
-            }
-            char c = char(cells[row][col].getName()[0] + i);
-            int n = cells[row][col].getName()[1] - '0' - i;
-            availableCells.push_back(string(1, c) + to_string(n));
-        }
-        for (int i=1; i<8; i++) {
-            if (col + i > 7 || row - i < 0) break;
-            if (isSameColored(row, col, row - i, col + i)) break;
-            if (isOppositeColored(row, col, row - i, col + i)){
-                char c = char(cells[row][col].getName()[0] + i);
-                int n = cells[row][col].getName()[1] - '0' + i;
-                availableCells.push_back(string(1, c) + to_string(n));
-                break;
-            }
-            char c = char(cells[row][col].getName()[0] + i);
-            int n = cells[row][col].getName()[1] - '0' + i;
-            availableCells.push_back(string(1, c) + to_string(n));
-        }
-        for (int i=1; i<8; i++) {
-            if (col - i < 0 || row + i > 7) break;
-            if (isSameColored(row, col, row + i, col - i)) break;
-            if (isOppositeColored(row, col, row + i, col - i)){
-                char c = char(cells[row][col].getName()[0] - i);
-                int n = cells[row][col].getName()[1] - '0' - i;
-                availableCells.push_back(string(1, c) + to_string(n));
-                break;
-            }
-            char c = char(cells[row][col].getName()[0] - i);
-            int n = cells[row][col].getName()[1] - '0' - i;
-            availableCells.push_back(string(1, c) + to_string(n));
-        }
-        for (int i=1; i<8; i++) {
-            if (col - i < 0 || row - i < 0) break;
-            if (isSameColored(row, col, row - i, col - i)) break;
-            if (isOppositeColored(row, col, row - i, col - i)){
-                char c = char(cells[row][col].getName()[0] - i);
-                int n = cells[row][col].getName()[1] - '0' + i;
-                availableCells.push_back(string(1, c) + to_string(n));
-                break;
-            }
-            char c = char(cells[row][col].getName()[0] - i);
-            int n = cells[row][col].getName()[1] - '0' + i;
-            availableCells.push_back(string(1, c) + to_string(n));
-        }
+        shootRay(availableCells, 1, 1, row, col);
+        shootRay(availableCells, 1, -1, row, col);
+        shootRay(availableCells, -1, 1, row, col);
+        shootRay(availableCells, -1, -1, row, col);
     }
     else if (tolower(cells[row][col].getContent()->getSymbol()) == 'q') {
-        for (int i=1; i<8; i++) {
-            if (col + i > 7) break;
-            if (isSameColored(row, col, row, col + i)) break;
-            if (isOppositeColored(row, col, row, col + i)){
-                char c = char(cells[row][col].getName()[0] + i);
-                int n = cells[row][col].getName()[1] - '0';
-                availableCells.push_back(string(1, c) + to_string(n));
-                break;
-            }
-            char c = char(cells[row][col].getName()[0] + i);
-            int n = cells[row][col].getName()[1] - '0';
-            availableCells.push_back(string(1, c) + to_string(n));
-        }
-        for (int i=1; i<8; i++) {
-            if (col - i < 0) break;
-            if (isSameColored(row, col, row, col - i)) break;
-            if (isOppositeColored(row, col, row, col - i)){
-                char c = char(cells[row][col].getName()[0] - i);
-                int n = cells[row][col].getName()[1] - '0';
-                availableCells.push_back(string(1, c) + to_string(n));
-                break;
-            }
-            char c = char(cells[row][col].getName()[0] - i);
-            int n = cells[row][col].getName()[1] - '0';
-            availableCells.push_back(string(1, c) + to_string(n));
-        }
-        for (int i=1; i<8; i++) {
-            if (row + i > 7) break;
-            if (isSameColored(row, col, row + i, col)) break;
-            if (isOppositeColored(row, col, row + i, col)){
-                char c = char(cells[row][col].getName()[0]);
-                int n = cells[row][col].getName()[1] - '0' - i;
-                availableCells.push_back(string(1, c) + to_string(n));
-                break;
-            }
-            char c = char(cells[row][col].getName()[0]);
-            int n = cells[row][col].getName()[1] - '0' - i;
-            availableCells.push_back(string(1, c) + to_string(n));
-        }
-        for (int i=1; i<8; i++) {
-            if (row - i < 0) break;
-            if (isSameColored(row, col, row - i, col)) break;
-            if (isOppositeColored(row, col, row - i, col)){
-                char c = char(cells[row][col].getName()[0]);
-                int n = cells[row][col].getName()[1] - '0' + i;
-                availableCells.push_back(string(1, c) + to_string(n));
-                break;
-            }
-            char c = char(cells[row][col].getName()[0]);
-            int n = cells[row][col].getName()[1] - '0' + i;
-            availableCells.push_back(string(1, c) + to_string(n));
-        }
-        for (int i=1; i<8; i++) {
-            if (col + i > 7 || row + i > 7) break;
-            if (isSameColored(row, col, row + i, col + i)) break;
-            if (isOppositeColored(row, col, row + i, col + i)){
-                char c = char(cells[row][col].getName()[0] + i);
-                int n = cells[row][col].getName()[1] - '0' - i;
-                availableCells.push_back(string(1, c) + to_string(n));
-                break;
-            }
-            char c = char(cells[row][col].getName()[0] + i);
-            int n = cells[row][col].getName()[1] - '0' - i;
-            availableCells.push_back(string(1, c) + to_string(n));
-        }
-        for (int i=1; i<8; i++) {
-            if (col + i > 7 || row - i < 0) break;
-            if (isSameColored(row, col, row - i, col + i)) break;
-            if (isOppositeColored(row, col, row - i, col + i)){
-                char c = char(cells[row][col].getName()[0] + i);
-                int n = cells[row][col].getName()[1] - '0' + i;
-                availableCells.push_back(string(1, c) + to_string(n));
-                break;
-            }
-            char c = char(cells[row][col].getName()[0] + i);
-            int n = cells[row][col].getName()[1] - '0' + i;
-            availableCells.push_back(string(1, c) + to_string(n));
-        }
-        for (int i=1; i<8; i++) {
-            if (col - i < 0 || row + i > 7) break;
-            if (isSameColored(row, col, row + i, col - i)) break;
-            if (isOppositeColored(row, col, row + i, col - i)){
-                char c = char(cells[row][col].getName()[0] - i);
-                int n = cells[row][col].getName()[1] - '0' - i;
-                availableCells.push_back(string(1, c) + to_string(n));
-                break;
-            }
-            char c = char(cells[row][col].getName()[0] - i);
-            int n = cells[row][col].getName()[1] - '0' - i;
-            availableCells.push_back(string(1, c) + to_string(n));
-        }
-        for (int i=1; i<8; i++) {
-            if (col - i < 0 || row - i < 0) break;
-            if (isSameColored(row, col, row - i, col - i)) break;
-            if (isOppositeColored(row, col, row - i, col - i)){
-                char c = char(cells[row][col].getName()[0] - i);
-                int n = cells[row][col].getName()[1] - '0' + i;
-                availableCells.push_back(string(1, c) + to_string(n));
-                break;
-            }
-            char c = char(cells[row][col].getName()[0] - i);
-            int n = cells[row][col].getName()[1] - '0' + i;
-            availableCells.push_back(string(1, c) + to_string(n));
-        }
+        shootRay(availableCells, 0, 1, row, col);
+        shootRay(availableCells, 0, -1, row, col);
+        shootRay(availableCells, 1, 0, row, col);
+        shootRay(availableCells, -1, 0, row, col);
+        shootRay(availableCells, 1, 1, row, col);
+        shootRay(availableCells, 1, -1, row, col);
+        shootRay(availableCells, -1, 1, row, col);
+        shootRay(availableCells, -1, -1, row, col);
     }
     else if (tolower(cells[row][col].getContent()->getSymbol()) == 'k') {
         for (int i=-1; i<2; i++) {
@@ -498,7 +322,7 @@ void Board::play() {
             this->makeMove();
         }
         catch (CellNameException e) {e.printMessage();}
-        catch (OptionException e){e.printMessage();}
-        catch (MoveException e){e.printMessage();}
+        catch (OptionException e) {e.printMessage();}
+        catch (MoveException e) {e.printMessage();}
     } while (!endGame);
 }

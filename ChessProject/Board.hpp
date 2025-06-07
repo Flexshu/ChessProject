@@ -17,6 +17,7 @@ public:
     int findCell(string cellName) const;
     bool isSameColored(int row1, int col1, int row2, int col2) const;
     bool isOppositeColored(int row1, int col1, int row2, int col2) const;
+    void shootRay(vector<string>& availableCells, int a, int b, int row, int col) const;
     void calcAvailableCells(string cellName) const;
     
     void checkLength(string cellName) const;
