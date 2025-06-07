@@ -6,6 +6,7 @@ Piece::Piece() {
     isPinned = false;
     canMove = false;
     color = "undefined";
+    isFirstMove = false;
 }
 
 Piece::Piece(bool isBlack) {
@@ -13,6 +14,7 @@ Piece::Piece(bool isBlack) {
     isPinned = false;
     canMove = false;
     color = isBlack ? "black" : "white";
+    isFirstMove = false;
 }
 
 void Piece::setSymbol(char symbol) {
@@ -35,6 +37,10 @@ void Piece::setColor(string color) {
     this->color = color;
 }
 
+void Piece::setIsFirstMove(bool isFirstMove) {
+    this->isFirstMove = isFirstMove;
+}
+
 char Piece::getSymbol() const {
     return symbol;
 }
@@ -53,4 +59,8 @@ bool Piece::getCanMove() const {
 
 string Piece::getColor() const { 
     return color;
+}
+
+bool Piece::getIsFirstMove() const {
+    return isFirstMove;
 }

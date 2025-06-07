@@ -312,15 +312,49 @@ void Board::calcAvailableCells(string cellName) const {
             }
         }
     }
-//    else if (tolower(cells[row][col].getContent()->getSymbol()) == 'p') {
-//        
-//    }
-    else availableCells = vector<string>(1, "o0");
+    else if (cells[row][col].getContent()->getSymbol() == 'P') {
+        char c = char(cells[row][col].getName()[0]);
+        int n = cells[row][col].getName()[1] - '0' + 1;
+        if (cells[row - 1][col].getContent() == nullptr) {
+            availableCells.push_back(string(1, c) + to_string(n));
+            if (cells[row][col].getContent()->getIsFirstMove() && cells[row - 2][col].getContent() == nullptr){
+                int n2 = cells[row][col].getName()[1] - '0' + 2;
+                availableCells.push_back(string(1, c) + to_string(n2));
+            }
+        }
+        if (isOppositeColored(row, col, row - 1, col + 1)){
+            char c2 = char(cells[row][col].getName()[0] + 1);
+            int n2 = cells[row][col].getName()[1] - '0' + 1;
+            availableCells.push_back(string(1, c2) + to_string(n2));
+        }
+        if (isOppositeColored(row, col, row - 1, col - 1)){
+            char c2 = char(cells[row][col].getName()[0] - 1);
+            int n2 = cells[row][col].getName()[1] - '0' + 1;
+            availableCells.push_back(string(1, c2) + to_string(n2));
+        }
+    }
+    else if (cells[row][col].getContent()->getSymbol() == 'p') {
+        char c = char(cells[row][col].getName()[0]);
+        int n = cells[row][col].getName()[1] - '0' - 1;
+        if (cells[row + 1][col].getContent() == nullptr) {
+            availableCells.push_back(string(1, c) + to_string(n));
+            if (cells[row][col].getContent()->getIsFirstMove() && cells[row + 2][col].getContent() == nullptr){
+                int n2 = cells[row][col].getName()[1] - '0' - 2;
+                availableCells.push_back(string(1, c) + to_string(n2));
+            }
+        }
+        if (isOppositeColored(row, col, row + 1, col + 1)){
+            char c2 = char(cells[row][col].getName()[0] + 1);
+            int n2 = cells[row][col].getName()[1] - '0' - 1;
+            availableCells.push_back(string(1, c2) + to_string(n2));
+        }
+        if (isOppositeColored(row, col, row + 1, col - 1)){
+            char c2 = char(cells[row][col].getName()[0] - 1);
+            int n2 = cells[row][col].getName()[1] - '0' - 1;
+            availableCells.push_back(string(1, c2) + to_string(n2));
+        }
+    }
     cells[row][col].getContent()->setAvailableCells(availableCells);
-//    for (int i=0; i<cells[row][col].getContent()->getAvailableCells().size(); i++) {
-//        cout<<cells[row][col].getContent()->getAvailableCells()[i]<<" ";
-//    }
-//    cout<<endl;
 }
 
 void Board::checkLength(string cellName) const {
@@ -383,12 +417,10 @@ void Board::checkMoveLegility(string cellName1, string cellName2) const {
     int col = findCell(cellName1) % 10;
     calcAvailableCells(cellName1);
     if (cells[row][col].getContent()->getAvailableCells().size() == 0) throw MoveException("pieces do not move so", cellName1, cellName2, cells[row][col].getContent()->getSymbol());
-    if (cells[row][col].getContent()->getAvailableCells()[0] != "o0") {
-        for (int i=0; i<cells[row][col].getContent()->getAvailableCells().size(); i++) {
-            if (cells[row][col].getContent()->getAvailableCells()[i] == cellName2) {exceptionChecker = true;}
-        }
-        if (!exceptionChecker) throw MoveException("pieces do not move so", cellName1, cellName2, cells[row][col].getContent()->getSymbol());
+    for (int i=0; i<cells[row][col].getContent()->getAvailableCells().size(); i++) {
+        if (cells[row][col].getContent()->getAvailableCells()[i] == cellName2) {exceptionChecker = true;}
     }
+    if (!exceptionChecker) throw MoveException("pieces do not move so", cellName1, cellName2, cells[row][col].getContent()->getSymbol());
 }
 
 void Board::checkEndGame(string cellName) {
@@ -453,6 +485,7 @@ void Board::makeMove() {
     int col1 = findCell(oldCell) % 10;
     int row2 = findCell(newCell) / 10;
     int col2 = findCell(newCell) % 10;
+    cells[row1][col1].getContent()->setIsFirstMove(false);
     cells[row2][col2].setContent(cells[row1][col1].getContent());
     cells[row1][col1].setContent(nullptr);
     turn = !turn;

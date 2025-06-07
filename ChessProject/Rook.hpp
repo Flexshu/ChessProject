@@ -6,8 +6,6 @@
 class Rook : public Piece{
 public:
     Rook(bool isBlack);
-    
-    void calcAvailableCells();
 };
 
 #endif

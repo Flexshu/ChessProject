@@ -6,8 +6,6 @@
 class King : public Piece{
 public:
     King(bool isBlack);
-    
-    void calcAvailableCells();
 };
 
 #endif

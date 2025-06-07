@@ -6,8 +6,6 @@
 class Bishop : public Piece{
 public:
     Bishop(bool isBlack);
-    
-    void calcAvailableCells();
 };
 
 #endif

@@ -6,8 +6,6 @@
 class Pawn : public Piece{
 public:
     Pawn(bool isBlack);
-    
-    void calcAvailableCells();
 };
 
 #endif

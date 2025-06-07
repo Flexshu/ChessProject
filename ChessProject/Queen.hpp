@@ -6,8 +6,6 @@
 class Queen : public Piece{
 public:
     Queen(bool isBlack);
-    
-    void calcAvailableCells();
 };
 
 #endif

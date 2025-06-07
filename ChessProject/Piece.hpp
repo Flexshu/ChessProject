@@ -13,6 +13,7 @@ protected:
     bool isPinned;
     bool canMove;
     string color;
+    bool isFirstMove;
     
 public:
     Piece();
@@ -23,12 +24,14 @@ public:
     void setIsPinned(bool isPinned);
     void setCanMove(bool canMove);
     void setColor(string color);
+    void setIsFirstMove(bool isFirstMove);
     
     char getSymbol() const;
     vector<string> getAvailableCells() const;
     bool getIsPinned() const;
     bool getCanMove() const;
     string getColor() const;
+    bool getIsFirstMove() const;
 };
 
 #endif
