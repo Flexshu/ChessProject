@@ -59,7 +59,7 @@ int Board::findCell(string cellName) const {
 
 bool Board::isSameColored(int row1, int col1, int row2, int col2) const {
     if (cells[row1][col1].getContent() != nullptr && cells[row2][col2].getContent() != nullptr) {
-        if (cells[row1][col2].getContent()->getColor() == cells[row2][col2].getContent()->getColor()) return true;
+        if (cells[row1][col1].getContent()->getColor() == cells[row2][col2].getContent()->getColor()) return true;
         else return false;
     }
     else return false;
@@ -67,7 +67,7 @@ bool Board::isSameColored(int row1, int col1, int row2, int col2) const {
 
 bool Board::isOppositeColored(int row1, int col1, int row2, int col2) const {
     if (cells[row1][col1].getContent() != nullptr && cells[row2][col2].getContent() != nullptr) {
-        if (cells[row1][col2].getContent()->getColor() != cells[row2][col2].getContent()->getColor()) return true;
+        if (cells[row1][col1].getContent()->getColor() != cells[row2][col2].getContent()->getColor()) return true;
         else return false;
     }
     else return false;
@@ -143,8 +143,66 @@ void Board::calcAvailableCells(string cellName) const {
             availableCells.push_back(string(1, c) + to_string(n));
         }
     }
+    else if (tolower(cells[row][col].getContent()->getSymbol()) == 'b') {
+        for (int i=1; i<8; i++) {
+            if (col + i > 7 || row + i > 7) break;
+            if (isSameColored(row, col, row + i, col + i)) break;
+            if (isOppositeColored(row, col, row + i, col + i)){
+                char c = char(cells[row][col].getName()[0] + i);
+                int n = cells[row][col].getName()[1] - '0' - i;
+                availableCells.push_back(string(1, c) + to_string(n));
+                break;
+            }
+            char c = char(cells[row][col].getName()[0] + i);
+            int n = cells[row][col].getName()[1] - '0' - i;
+            availableCells.push_back(string(1, c) + to_string(n));
+        }
+        for (int i=1; i<8; i++) {
+            if (col + i > 7 || row - i < 0) break;
+            if (isSameColored(row, col, row - i, col + i)) break;
+            if (isOppositeColored(row, col, row - i, col + i)){
+                char c = char(cells[row][col].getName()[0] + i);
+                int n = cells[row][col].getName()[1] - '0' + i;
+                availableCells.push_back(string(1, c) + to_string(n));
+                break;
+            }
+            char c = char(cells[row][col].getName()[0] + i);
+            int n = cells[row][col].getName()[1] - '0' + i;
+            availableCells.push_back(string(1, c) + to_string(n));
+        }
+        for (int i=1; i<8; i++) {
+            if (col - i < 0 || row + i > 7) break;
+            if (isSameColored(row, col, row + i, col - i)) break;
+            if (isOppositeColored(row, col, row + i, col - i)){
+                char c = char(cells[row][col].getName()[0] - i);
+                int n = cells[row][col].getName()[1] - '0' - i;
+                availableCells.push_back(string(1, c) + to_string(n));
+                break;
+            }
+            char c = char(cells[row][col].getName()[0] - i);
+            int n = cells[row][col].getName()[1] - '0' - i;
+            availableCells.push_back(string(1, c) + to_string(n));
+        }
+        for (int i=1; i<8; i++) {
+            if (col - i < 0 || row - i < 0) break;
+            if (isSameColored(row, col, row - i, col - i)) break;
+            if (isOppositeColored(row, col, row - i, col - i)){
+                char c = char(cells[row][col].getName()[0] - i);
+                int n = cells[row][col].getName()[1] - '0' + i;
+                availableCells.push_back(string(1, c) + to_string(n));
+                break;
+            }
+            char c = char(cells[row][col].getName()[0] - i);
+            int n = cells[row][col].getName()[1] - '0' + i;
+            availableCells.push_back(string(1, c) + to_string(n));
+        }
+    }
     else availableCells = vector<string>(1, "o0");
     cells[row][col].getContent()->setAvailableCells(availableCells);
+//    for (int i=0; i<cells[row][col].getContent()->getAvailableCells().size(); i++) {
+//        cout<<cells[row][col].getContent()->getAvailableCells()[i]<<" ";
+//    }
+//    cout<<endl;
 }
 
 void Board::checkLength(string cellName) const {
