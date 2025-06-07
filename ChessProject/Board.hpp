@@ -15,6 +15,8 @@ public:
     Cell getCell(int row, int col) const;
     
     int findCell(string cellName) const;
+    bool isSameColored(int row1, int col1, int row2, int col2) const;
+    bool isOppositeColored(int row1, int col1, int row2, int col2) const;
     void calcAvailableCells(string cellName) const;
     
     void checkLength(string cellName) const;

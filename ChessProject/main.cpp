@@ -1,7 +1,2 @@
 #include "Board.hpp"
-
-int main() {
-    Board().play();
-    
-    return 0;
-}
+int main(){Board().play(); return 0;}
