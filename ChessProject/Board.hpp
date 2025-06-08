@@ -18,7 +18,9 @@ public:
     bool isSameColored(int row1, int col1, int row2, int col2) const;
     bool isOppositeColored(int row1, int col1, int row2, int col2) const;
     void shootRay(vector<string>& availableCells, int a, int b, int row, int col) const;
+    void shootRay(int a, int b, int row, int col);
     void calcAvailableCells(string cellName) const;
+    void calcControlledCells();
     
     void checkLength(string cellName) const;
     void checkFirstSymbol(string cellName) const;

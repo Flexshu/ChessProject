@@ -78,14 +78,39 @@ void Board::shootRay(vector<string> &availableCells, int a, int b, int row, int 
         if (row + i * b > 7 || row + i * b < 0 || col + i * a > 7 || col + i * a < 0) break;
         if (isSameColored(row, col, row + i * b, col + i * a)) break;
         if (isOppositeColored(row, col, row + i * b, col + i * a)){
-        char c = char(cells[row][col].getName()[0] + i * a);
-        int n = cells[row][col].getName()[1] - '0' - i * b;
-        availableCells.push_back(string(1, c) + to_string(n));
+            char c = char(cells[row][col].getName()[0] + i * a);
+            int n = cells[row][col].getName()[1] - '0' - i * b;
+            availableCells.push_back(string(1, c) + to_string(n));
             break;
         }
         char c = char(cells[row][col].getName()[0] + i * a);
         int n = cells[row][col].getName()[1] - '0' - i * b;
         availableCells.push_back(string(1, c) + to_string(n));
+    }
+}
+
+void Board::shootRay(int a, int b, int row, int col) {
+    for (int i=1; i<8; i++) {
+        if (row + i * b > 7 || row + i * b < 0 || col + i * a > 7 || col + i * a < 0) break;
+        if (isSameColored(row, col, row + i * b, col + i * a) || isOppositeColored(row, col, row + i * b, col + i * a)){
+            if (row + i * b <= 7 && row + i * b >= 0 && col + i * a <= 7 && col + i * a >= 0) {
+                if (cells[row][col].getContent()->getColor() == "white") {
+                    cells[row + i * b][col + i * a].setWhiteControl(true);
+                }
+                if (cells[row][col].getContent()->getColor() == "black") {
+                    cells[row + i * b][col + i * a].setBlackControl(true);
+                }
+            }
+            break;
+        }
+        if (row + i * b <= 7 && row + i * b >= 0 && col + i * a <= 7 && col + i * a >= 0) {
+            if (cells[row][col].getContent()->getColor() == "white") {
+                cells[row + i * b][col + i * a].setWhiteControl(true);
+            }
+            if (cells[row][col].getContent()->getColor() == "black") {
+                cells[row + i * b][col + i * a].setBlackControl(true);
+            }
+        }
     }
 }
 
@@ -146,15 +171,19 @@ void Board::calcAvailableCells(string cellName) const {
                 availableCells.push_back(string(1, c) + to_string(n2));
             }
         }
-        if (isOppositeColored(row, col, row - 1, col + 1)){
-            char c2 = char(cells[row][col].getName()[0] + 1);
-            int n2 = cells[row][col].getName()[1] - '0' + 1;
-            availableCells.push_back(string(1, c2) + to_string(n2));
+        if (col != 7) {
+            if (isOppositeColored(row, col, row - 1, col + 1)){
+                char c2 = char(cells[row][col].getName()[0] + 1);
+                int n2 = cells[row][col].getName()[1] - '0' + 1;
+                availableCells.push_back(string(1, c2) + to_string(n2));
+            }
         }
-        if (isOppositeColored(row, col, row - 1, col - 1)){
-            char c2 = char(cells[row][col].getName()[0] - 1);
-            int n2 = cells[row][col].getName()[1] - '0' + 1;
-            availableCells.push_back(string(1, c2) + to_string(n2));
+        if (col != 0) {
+            if (isOppositeColored(row, col, row - 1, col - 1)){
+                char c2 = char(cells[row][col].getName()[0] - 1);
+                int n2 = cells[row][col].getName()[1] - '0' + 1;
+                availableCells.push_back(string(1, c2) + to_string(n2));
+            }
         }
     }
     else if (cells[row][col].getContent()->getSymbol() == 'p') {
@@ -167,18 +196,131 @@ void Board::calcAvailableCells(string cellName) const {
                 availableCells.push_back(string(1, c) + to_string(n2));
             }
         }
-        if (isOppositeColored(row, col, row + 1, col + 1)){
-            char c2 = char(cells[row][col].getName()[0] + 1);
-            int n2 = cells[row][col].getName()[1] - '0' - 1;
-            availableCells.push_back(string(1, c2) + to_string(n2));
+        if (col != 7) {
+            if (isOppositeColored(row, col, row + 1, col + 1)){
+                char c2 = char(cells[row][col].getName()[0] + 1);
+                int n2 = cells[row][col].getName()[1] - '0' - 1;
+                availableCells.push_back(string(1, c2) + to_string(n2));
+            }
         }
-        if (isOppositeColored(row, col, row + 1, col - 1)){
-            char c2 = char(cells[row][col].getName()[0] - 1);
-            int n2 = cells[row][col].getName()[1] - '0' - 1;
-            availableCells.push_back(string(1, c2) + to_string(n2));
+        if (col != 0) {
+            if (isOppositeColored(row, col, row + 1, col - 1)){
+                char c2 = char(cells[row][col].getName()[0] - 1);
+                int n2 = cells[row][col].getName()[1] - '0' - 1;
+                availableCells.push_back(string(1, c2) + to_string(n2));
+            }
         }
     }
     cells[row][col].getContent()->setAvailableCells(availableCells);
+}
+
+void Board::calcControlledCells() {
+    for (int i=0; i<8; i++) {
+        for (int j=0; j<8; j++) {
+            cells[i][j].setWhiteControl(false);
+            cells[i][j].setBlackControl(false);
+        }
+    }
+    for (int row=0; row<8; row++) {
+        for (int col=0; col<8; col++) {
+            if (cells[row][col].getContent() != nullptr) {
+                if (tolower(cells[row][col].getContent()->getSymbol()) == 'n') {
+                    for (int i=-2; i<3; i+=4) {
+                        for (int j=-1; j<2; j+=2) {
+                            if (row + i <= 7 && row + i >= 0 && col + j <= 7 && col + j >= 0) {
+                                if (cells[row][col].getContent()->getColor() == "white") {
+                                    cells[row + i][col + j].setWhiteControl(true);
+                                }
+                                if (cells[row][col].getContent()->getColor() == "black") {
+                                    cells[row + i][col + j].setBlackControl(true);
+                                }
+                            }
+                            if (row + j <= 7 && row + j >= 0 && col + i <= 7 && col + i >= 0) {
+                                if (cells[row][col].getContent()->getColor() == "white") {
+                                    cells[row + j][col + i].setWhiteControl(true);
+                                }
+                                if (cells[row][col].getContent()->getColor() == "black") {
+                                    cells[row + j][col + i].setBlackControl(true);
+                                }
+                            }
+                        }
+                    }
+                }
+                if (tolower(cells[row][col].getContent()->getSymbol()) == 'r') {
+                    shootRay(0, 1, row, col);
+                    shootRay(0, -1, row, col);
+                    shootRay(1, 0, row, col);
+                    shootRay(-1, 0, row, col);
+                }
+                if (tolower(cells[row][col].getContent()->getSymbol()) == 'b') {
+                    shootRay(1, 1, row, col);
+                    shootRay(1, -1, row, col);
+                    shootRay(-1, 1, row, col);
+                    shootRay(-1, -1, row, col);
+                }
+                if (tolower(cells[row][col].getContent()->getSymbol()) == 'q') {
+                    shootRay(0, 1, row, col);
+                    shootRay(0, -1, row, col);
+                    shootRay(1, 0, row, col);
+                    shootRay(-1, 0, row, col);
+                    shootRay(1, 1, row, col);
+                    shootRay(1, -1, row, col);
+                    shootRay(-1, 1, row, col);
+                    shootRay(-1, -1, row, col);
+                }
+                if (tolower(cells[row][col].getContent()->getSymbol()) == 'k') {
+                    for (int i=-1; i<2; i++) {
+                        for (int j=-1; j<2; j++) {
+                            if (row + i <= 7 && row + i >= 0 && col + j <= 7 && col + j >= 0) {
+                                if (cells[row][col].getContent()->getColor() == "white") {
+                                    cells[row + i][col + j].setWhiteControl(true);
+                                }
+                                if (cells[row][col].getContent()->getColor() == "black") {
+                                    cells[row + i][col + j].setBlackControl(true);
+                                }
+                            }
+                        }
+                    }
+                }
+                if (cells[row][col].getContent()->getSymbol() == 'P') {
+                    if (row - 1 >= 0 && col + 1 <= 7) {
+                        if (cells[row][col].getContent()->getColor() == "white") {
+                            cells[row - 1][col + 1].setWhiteControl(true);
+                        }
+                        if (cells[row][col].getContent()->getColor() == "black") {
+                            cells[row - 1][col + 1].setBlackControl(true);
+                        }
+                    }
+                    if (row - 1 >= 0 && col - 1 >= 0) {
+                        if (cells[row][col].getContent()->getColor() == "white") {
+                            cells[row - 1][col - 1].setWhiteControl(true);
+                        }
+                        if (cells[row][col].getContent()->getColor() == "black") {
+                            cells[row - 1][col - 1].setBlackControl(true);
+                        }
+                    }
+                }
+                if (cells[row][col].getContent()->getSymbol() == 'p') {
+                    if (row + 1 <= 7 && col + 1 <= 7) {
+                        if (cells[row][col].getContent()->getColor() == "white") {
+                            cells[row + 1][col + 1].setWhiteControl(true);
+                        }
+                        if (cells[row][col].getContent()->getColor() == "black") {
+                            cells[row + 1][col + 1].setBlackControl(true);
+                        }
+                    }
+                    if (row + 1 <= 7 && col - 1 >= 0) {
+                        if (cells[row][col].getContent()->getColor() == "white") {
+                            cells[row + 1][col - 1].setWhiteControl(true);
+                        }
+                        if (cells[row][col].getContent()->getColor() == "black") {
+                            cells[row + 1][col - 1].setBlackControl(true);
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 void Board::checkLength(string cellName) const {
@@ -313,6 +455,7 @@ void Board::makeMove() {
     cells[row2][col2].setContent(cells[row1][col1].getContent());
     cells[row1][col1].setContent(nullptr);
     turn = !turn;
+    calcControlledCells();
 }
 
 void Board::play() { 
