@@ -246,19 +246,19 @@ void Board::calcControlledCells() {
                         }
                     }
                 }
-                if (tolower(cells[row][col].getContent()->getSymbol()) == 'r') {
+                else if (tolower(cells[row][col].getContent()->getSymbol()) == 'r') {
                     shootRay(0, 1, row, col);
                     shootRay(0, -1, row, col);
                     shootRay(1, 0, row, col);
                     shootRay(-1, 0, row, col);
                 }
-                if (tolower(cells[row][col].getContent()->getSymbol()) == 'b') {
+                else if (tolower(cells[row][col].getContent()->getSymbol()) == 'b') {
                     shootRay(1, 1, row, col);
                     shootRay(1, -1, row, col);
                     shootRay(-1, 1, row, col);
                     shootRay(-1, -1, row, col);
                 }
-                if (tolower(cells[row][col].getContent()->getSymbol()) == 'q') {
+                else if (tolower(cells[row][col].getContent()->getSymbol()) == 'q') {
                     shootRay(0, 1, row, col);
                     shootRay(0, -1, row, col);
                     shootRay(1, 0, row, col);
@@ -268,7 +268,7 @@ void Board::calcControlledCells() {
                     shootRay(-1, 1, row, col);
                     shootRay(-1, -1, row, col);
                 }
-                if (tolower(cells[row][col].getContent()->getSymbol()) == 'k') {
+                else if (tolower(cells[row][col].getContent()->getSymbol()) == 'k') {
                     for (int i=-1; i<2; i++) {
                         for (int j=-1; j<2; j++) {
                             if (row + i <= 7 && row + i >= 0 && col + j <= 7 && col + j >= 0) {
@@ -282,7 +282,7 @@ void Board::calcControlledCells() {
                         }
                     }
                 }
-                if (cells[row][col].getContent()->getSymbol() == 'P') {
+                else if (cells[row][col].getContent()->getSymbol() == 'P') {
                     if (row - 1 >= 0 && col + 1 <= 7) {
                         if (cells[row][col].getContent()->getColor() == "white") {
                             cells[row - 1][col + 1].setWhiteControl(true);
@@ -300,7 +300,7 @@ void Board::calcControlledCells() {
                         }
                     }
                 }
-                if (cells[row][col].getContent()->getSymbol() == 'p') {
+                else if (cells[row][col].getContent()->getSymbol() == 'p') {
                     if (row + 1 <= 7 && col + 1 <= 7) {
                         if (cells[row][col].getContent()->getColor() == "white") {
                             cells[row + 1][col + 1].setWhiteControl(true);
@@ -389,6 +389,27 @@ void Board::checkMoveLegility(string cellName1, string cellName2) const {
     if (!exceptionChecker) throw MoveException("pieces do not move so", cellName1, cellName2, cells[row][col].getContent()->getSymbol());
 }
 
+void Board::checkCheck(string cellName1, string cellName2, bool isFirstMove) {
+    for (int i=0; i<8; i++) {
+        for (int j=0; j<8; j++) {
+            if (cells[i][j].getContent() != nullptr) {
+                if ((cells[i][j].getContent()->getSymbol() == 'K' && cells[i][j].getBlackControl() && !turn)
+                    || (cells[i][j].getContent()->getSymbol() == 'k' && cells[i][j].getWhiteControl() && turn)) {
+                    int row1 = findCell(cellName1) / 10;
+                    int col1 = findCell(cellName1) % 10;
+                    int row2 = findCell(cellName2) / 10;
+                    int col2 = findCell(cellName2) % 10;
+                    cells[row2][col2].getContent()->setIsFirstMove(isFirstMove);
+                    cells[row1][col1].setContent(cells[row2][col2].getContent());
+                    cells[row2][col2].setContent(nullptr);
+                    turn = !turn;
+                    throw MoveException("the king is in check", cellName1, cellName2, cells[row1][col1].getContent()->getSymbol());
+                }
+            }
+        }
+    }
+}
+
 void Board::checkEndGame(string cellName) {
     if (cellName == "e0") endGame = true;
 }
@@ -451,11 +472,13 @@ void Board::makeMove() {
     int col1 = findCell(oldCell) % 10;
     int row2 = findCell(newCell) / 10;
     int col2 = findCell(newCell) % 10;
+    bool isFirstMove = cells[row1][col1].getContent()->getIsFirstMove();
     cells[row1][col1].getContent()->setIsFirstMove(false);
     cells[row2][col2].setContent(cells[row1][col1].getContent());
     cells[row1][col1].setContent(nullptr);
     turn = !turn;
     calcControlledCells();
+    checkCheck(oldCell, newCell, isFirstMove);
 }
 
 void Board::play() { 

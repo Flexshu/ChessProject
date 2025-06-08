@@ -10,7 +10,6 @@ class Piece{
 protected:
     char symbol;
     vector<string> availableCells;
-    bool isPinned;
     bool canMove;
     string color;
     bool isFirstMove;
@@ -21,14 +20,12 @@ public:
     
     void setSymbol(char symbol);
     void setAvailableCells(vector<string> availableCells);
-    void setIsPinned(bool isPinned);
     void setCanMove(bool canMove);
     void setColor(string color);
     void setIsFirstMove(bool isFirstMove);
     
     char getSymbol() const;
     vector<string> getAvailableCells() const;
-    bool getIsPinned() const;
     bool getCanMove() const;
     string getColor() const;
     bool getIsFirstMove() const;

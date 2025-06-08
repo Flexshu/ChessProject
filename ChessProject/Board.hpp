@@ -30,6 +30,7 @@ public:
     void checkSameColorness(string cellName) const;
     void checkSameCell(string cellName1, string cellName2) const;
     void checkMoveLegility(string cellName1, string cellName2) const;
+    void checkCheck(string cellName1, string cellName2, bool isFirstMove);
     void checkEndGame(string cellName);
     
     void printBoard() const;

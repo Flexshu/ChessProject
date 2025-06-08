@@ -3,7 +3,6 @@
 
 Piece::Piece() {
     symbol = ' ';
-    isPinned = false;
     canMove = false;
     color = "undefined";
     isFirstMove = false;
@@ -11,7 +10,6 @@ Piece::Piece() {
 
 Piece::Piece(bool isBlack) {
     symbol = ' ';
-    isPinned = false;
     canMove = false;
     color = isBlack ? "black" : "white";
     isFirstMove = false;
@@ -23,10 +21,6 @@ void Piece::setSymbol(char symbol) {
 
 void Piece::setAvailableCells(vector<string> availableCells) {
     this->availableCells = availableCells;
-}
-
-void Piece::setIsPinned(bool isPinned) { 
-    this->isPinned = isPinned;
 }
 
 void Piece::setCanMove(bool canMove) { 
@@ -47,10 +41,6 @@ char Piece::getSymbol() const {
 
 vector<string> Piece::getAvailableCells() const {
     return availableCells;
-}
-
-bool Piece::getIsPinned() const { 
-    return isPinned;
 }
 
 bool Piece::getCanMove() const { 
