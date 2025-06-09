@@ -1,16 +1,13 @@
 #include "Piece.hpp"
 
-
 Piece::Piece() {
     symbol = ' ';
-    canMove = false;
     color = "undefined";
     isFirstMove = false;
 }
 
 Piece::Piece(bool isBlack) {
     symbol = ' ';
-    canMove = false;
     color = isBlack ? "black" : "white";
     isFirstMove = false;
 }
@@ -21,10 +18,6 @@ void Piece::setSymbol(char symbol) {
 
 void Piece::setAvailableCells(vector<string> availableCells) {
     this->availableCells = availableCells;
-}
-
-void Piece::setCanMove(bool canMove) { 
-    this->canMove = canMove;
 }
 
 void Piece::setColor(string color) {
@@ -41,10 +34,6 @@ char Piece::getSymbol() const {
 
 vector<string> Piece::getAvailableCells() const {
     return availableCells;
-}
-
-bool Piece::getCanMove() const { 
-    return canMove;
 }
 
 string Piece::getColor() const { 

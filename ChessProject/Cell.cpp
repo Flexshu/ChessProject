@@ -1,6 +1,5 @@
 #include "Cell.hpp"
 
-
 Cell::Cell() { 
     name = "undefined";
     content = nullptr;

@@ -1,12 +1,7 @@
 #ifndef Cell_hpp
 #define Cell_hpp
 
-#include "Pawn.hpp"
-#include "Rook.hpp"
-#include "Knight.hpp"
-#include "Bishop.hpp"
-#include "Queen.hpp"
-#include "King.hpp"
+#include "Piece.hpp"
 #include "ChessException.h"
 using namespace std;
 

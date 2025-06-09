@@ -10,7 +10,6 @@ class Piece{
 protected:
     char symbol;
     vector<string> availableCells;
-    bool canMove;
     string color;
     bool isFirstMove;
     
@@ -20,15 +19,56 @@ public:
     
     void setSymbol(char symbol);
     void setAvailableCells(vector<string> availableCells);
-    void setCanMove(bool canMove);
     void setColor(string color);
     void setIsFirstMove(bool isFirstMove);
     
     char getSymbol() const;
     vector<string> getAvailableCells() const;
-    bool getCanMove() const;
     string getColor() const;
     bool getIsFirstMove() const;
+};
+
+class Rook : public Piece{
+public:
+    Rook(bool isBlack) : Piece(isBlack) {
+        symbol = color == "white" ? 'R' : 'r';
+    }
+};
+
+class Bishop : public Piece{
+public:
+    Bishop(bool isBlack) : Piece(isBlack) {
+        symbol = color == "white" ? 'B' : 'b';
+    }
+};
+
+class Knight : public Piece{
+public:
+    Knight(bool isBlack) : Piece(isBlack) {
+        symbol = color == "white" ? 'N' : 'n';
+    }
+};
+
+class Queen : public Piece{
+public:
+    Queen(bool isBlack) : Piece(isBlack) {
+        symbol = color == "white" ? 'Q' : 'q';
+    }
+};
+
+class King : public Piece{
+public:
+    King(bool isBlack) : Piece(isBlack) {
+        symbol = color == "white" ? 'K' : 'k';
+    }
+};
+
+class Pawn : public Piece{
+public:
+    Pawn(bool isBlack) : Piece(isBlack) {
+        symbol = color == "white" ? 'P' : 'p';
+        isFirstMove = true;
+    }
 };
 
 #endif
