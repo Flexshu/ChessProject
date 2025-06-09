@@ -3,7 +3,6 @@
 
 #include "Piece.hpp"
 #include "ChessException.h"
-using namespace std;
 
 class Cell{
     string name;
@@ -14,7 +13,7 @@ class Cell{
 
 public:
     Cell();
-    Cell(string name);
+    ~Cell();
 
     void setName(string name);
     void setContent(Piece* content);

@@ -8,12 +8,8 @@ Cell::Cell() {
     canEnPassant = false;
 }
 
-Cell::Cell(string name) {
-    this->name = name;
-    content = nullptr;
-    whiteControl = false;
-    blackControl = false;
-    canEnPassant = false;
+Cell::~Cell() {
+    delete content;
 }
 
 void Cell::setName(string name) {
