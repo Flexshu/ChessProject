@@ -521,7 +521,21 @@ void Board::printBoard() const {
                 cout<<"|   ";
             }
             else{
-                cout<<"| "<<cells[i][j].getContent()->getSymbol()<<" ";
+                cout<<"| ";
+                if (cells[i][j].getContent()->getSymbol() == 'K') cout<<"♚";
+                else if (cells[i][j].getContent()->getSymbol() == 'k') cout<<"♔";
+                else if (cells[i][j].getContent()->getSymbol() == 'Q') cout<<"♛";
+                else if (cells[i][j].getContent()->getSymbol() == 'q') cout<<"♕";
+                else if (cells[i][j].getContent()->getSymbol() == 'R') cout<<"♜";
+                else if (cells[i][j].getContent()->getSymbol() == 'r') cout<<"♖";
+                else if (cells[i][j].getContent()->getSymbol() == 'N') cout<<"♞";
+                else if (cells[i][j].getContent()->getSymbol() == 'n') cout<<"♘";
+                else if (cells[i][j].getContent()->getSymbol() == 'B') cout<<"♝";
+                else if (cells[i][j].getContent()->getSymbol() == 'b') cout<<"♗";
+                else if (cells[i][j].getContent()->getSymbol() == 'P') cout<<"♟";
+                else if (cells[i][j].getContent()->getSymbol() == 'p') cout<<"♙";
+                else cout<<" ";
+                cout<<" ";
             }
         }
         cout<<"|\n";
