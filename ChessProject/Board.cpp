@@ -578,13 +578,14 @@ void Board::makeMove() {
     checkCheck(oldCell, newCell, isFirstMove, taken);
     checkMate();
     checkStalemate();
+    delete taken;
 }
 
 void Board::play() { 
     do {
         try {
-            this->printBoard();
-            this->makeMove();
+            printBoard();
+            makeMove();
         }
         catch (CellNameException e) {e.printMessage();}
         catch (OptionException e) {e.printMessage();}
