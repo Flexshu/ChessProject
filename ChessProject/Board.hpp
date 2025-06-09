@@ -23,6 +23,7 @@ public:
     void calcControlledCells();
     bool isCheck();
     bool canMove();
+    void clearEnPassant();
     
     void checkLength(string cellName) const;
     void checkFirstSymbol(string cellName) const;
@@ -32,6 +33,8 @@ public:
     void checkSameColorness(string cellName) const;
     void checkSameCell(string cellName1, string cellName2) const;
     void checkMoveLegility(string cellName1, string cellName2) const;
+    void checkEnPassantAvailability(string cellName1, string cellName2);
+    void checkEnPassantPlayed(string cellName1);
     void checkCheck(string cellName1, string cellName2, bool isFirstMove, Piece* taken);
     void checkEndGame(string cellName);
     void checkMate();

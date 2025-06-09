@@ -15,6 +15,7 @@ class Cell{
     Piece* content;
     bool whiteControl;
     bool blackControl;
+    bool canEnPassant;
 
 public:
     Cell();
@@ -24,11 +25,13 @@ public:
     void setContent(Piece* content);
     void setWhiteControl(bool whiteControl);
     void setBlackControl(bool blackControl);
+    void setCanEnPassant(bool canEnPassant);
     
     string getName() const;
     Piece* getContent() const;
     bool getWhiteControl() const;
     bool getBlackControl() const;
+    bool getCanEnPassant() const;
 };
 
 #endif

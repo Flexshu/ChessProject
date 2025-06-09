@@ -6,6 +6,7 @@ Cell::Cell() {
     content = nullptr;
     whiteControl = false;
     blackControl = false;
+    canEnPassant = false;
 }
 
 Cell::Cell(string name) {
@@ -13,6 +14,7 @@ Cell::Cell(string name) {
     content = nullptr;
     whiteControl = false;
     blackControl = false;
+    canEnPassant = false;
 }
 
 void Cell::setName(string name) {
@@ -31,6 +33,10 @@ void Cell::setBlackControl(bool blackControl) {
     this->blackControl = blackControl;
 }
 
+void Cell::setCanEnPassant(bool canEnPassant) {
+    this->canEnPassant = canEnPassant;
+}
+
 string Cell::getName() const {
     return name;
 }
@@ -47,3 +53,6 @@ bool Cell::getBlackControl() const {
     return blackControl;
 }
 
+bool Cell::getCanEnPassant() const { 
+    return canEnPassant;
+}

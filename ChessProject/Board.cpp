@@ -172,14 +172,14 @@ void Board::calcAvailableCells(string cellName) const {
             }
         }
         if (col != 7) {
-            if (isOppositeColored(row, col, row - 1, col + 1)){
+            if (isOppositeColored(row, col, row - 1, col + 1) || cells[row - 1][col + 1].getCanEnPassant()){
                 char c2 = char(cells[row][col].getName()[0] + 1);
                 int n2 = cells[row][col].getName()[1] - '0' + 1;
                 availableCells.push_back(string(1, c2) + to_string(n2));
             }
         }
         if (col != 0) {
-            if (isOppositeColored(row, col, row - 1, col - 1)){
+            if (isOppositeColored(row, col, row - 1, col - 1) || cells[row - 1][col - 1].getCanEnPassant()){
                 char c2 = char(cells[row][col].getName()[0] - 1);
                 int n2 = cells[row][col].getName()[1] - '0' + 1;
                 availableCells.push_back(string(1, c2) + to_string(n2));
@@ -197,14 +197,14 @@ void Board::calcAvailableCells(string cellName) const {
             }
         }
         if (col != 7) {
-            if (isOppositeColored(row, col, row + 1, col + 1)){
+            if (isOppositeColored(row, col, row + 1, col + 1) || cells[row + 1][col + 1].getCanEnPassant()){
                 char c2 = char(cells[row][col].getName()[0] + 1);
                 int n2 = cells[row][col].getName()[1] - '0' - 1;
                 availableCells.push_back(string(1, c2) + to_string(n2));
             }
         }
         if (col != 0) {
-            if (isOppositeColored(row, col, row + 1, col - 1)){
+            if (isOppositeColored(row, col, row + 1, col - 1) || cells[row + 1][col - 1].getCanEnPassant()){
                 char c2 = char(cells[row][col].getName()[0] - 1);
                 int n2 = cells[row][col].getName()[1] - '0' - 1;
                 availableCells.push_back(string(1, c2) + to_string(n2));
@@ -362,6 +362,16 @@ bool Board::canMove() {
     return false;
 }
 
+void Board::clearEnPassant() {
+    for (int i=0; i<8; i++) {
+        for (int j=0; j<8; j++) {
+            if (cells[i][j].getCanEnPassant() == true) {
+                cells[i][j].setCanEnPassant(false);
+            }
+        }
+    }
+}
+
 void Board::checkLength(string cellName) const {
     if (cellName.size() != 2) throw CellNameException("does not match the length", cellName);
 }
@@ -426,6 +436,34 @@ void Board::checkMoveLegility(string cellName1, string cellName2) const {
         if (cells[row][col].getContent()->getAvailableCells()[i] == cellName2) {exceptionChecker = true;}
     }
     if (!exceptionChecker) throw MoveException("pieces do not move so", cellName1, cellName2, cells[row][col].getContent()->getSymbol());
+}
+
+void Board::checkEnPassantAvailability(string cellName1, string cellName2) {
+    int row1 = findCell(cellName1) / 10;
+    int col1 = findCell(cellName1) % 10;
+    int row2 = findCell(cellName2) / 10;
+    int col2 = findCell(cellName2) % 10;
+    if (abs(row2 - row1) == 2 && col1 == col2) {
+        if (cells[row2][col2].getContent()->getSymbol() == 'P') {
+            cells[row1 - 1][col1].setCanEnPassant(true);
+        }
+        else if (cells[row2][col2].getContent()->getSymbol() == 'p') {
+            cells[row1 + 1][col1].setCanEnPassant(true);
+        }
+    }
+}
+
+void Board::checkEnPassantPlayed(string cellName) {
+    int row = findCell(cellName) / 10;
+    int col = findCell(cellName) % 10;
+    if (cells[row][col].getCanEnPassant()) {
+        if (cells[row][col].getContent()->getSymbol() == 'P') {
+            cells[row + 1][col].setContent(nullptr);
+        }
+        else if (cells[row][col].getContent()->getSymbol() == 'p') {
+            cells[row - 1][col].setContent(nullptr);
+        }
+    }
 }
 
 void Board::checkCheck(string cellName1, string cellName2, bool isFirstMove, Piece* taken) {
@@ -533,6 +571,9 @@ void Board::makeMove() {
     cells[row2][col2].setContent(cells[row1][col1].getContent());
     cells[row1][col1].setContent(nullptr);
     turn = !turn;
+    checkEnPassantPlayed(newCell);
+    clearEnPassant();
+    checkEnPassantAvailability(oldCell, newCell);
     calcControlledCells();
     checkCheck(oldCell, newCell, isFirstMove, taken);
     checkMate();
