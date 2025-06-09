@@ -125,8 +125,8 @@ void Board::calcAvailableCells(string cellName) const {
                 int i1 = cells[row][col].getName()[1] - '0' + j;
                 char c2 = char(cells[row][col].getName()[0] + j);
                 int i2 = cells[row][col].getName()[1] - '0' + i;
-                if (c1 >= 'a' && c1 <= 'h' && i1 >= 1 && i1 <= 8) availableCells.push_back(string(1, c1) + to_string(i1));
-                if (c2 >= 'a' && c2 <= 'h' && i2 >= 1 && i2 <= 8) availableCells.push_back(string(1, c2) + to_string(i2));
+                if (c1 >= 'a' && c1 <= 'h' && i1 >= 1 && i1 <= 8 && !isSameColored(row, col, row - j, col + i)) availableCells.push_back(string(1, c1) + to_string(i1));
+                if (c2 >= 'a' && c2 <= 'h' && i2 >= 1 && i2 <= 8 && !isSameColored(row, col, row - i, col + j)) availableCells.push_back(string(1, c2) + to_string(i2));
             }
         }
     }
@@ -157,7 +157,7 @@ void Board::calcAvailableCells(string cellName) const {
             for (int j=-1; j<2; j++) {
                 char c = char(cells[row][col].getName()[0] + i);
                 int n = cells[row][col].getName()[1] - '0' + j;
-                if (c >= 'a' && c <= 'h' && n >= 1 && n <= 8) availableCells.push_back(string(1, c) + to_string(n));
+                if (c >= 'a' && c <= 'h' && n >= 1 && n <= 8 && !isSameColored(row, col, row - j, col + i)) availableCells.push_back(string(1, c) + to_string(n));
             }
         }
     }
@@ -323,6 +323,45 @@ void Board::calcControlledCells() {
     }
 }
 
+bool Board::isCheck() {
+    for (int i=0; i<8; i++) {
+        for (int j=0; j<8; j++) {
+            if (cells[i][j].getContent() != nullptr) {
+                if ((cells[i][j].getContent()->getSymbol() == 'K' && cells[i][j].getBlackControl())
+                    || (cells[i][j].getContent()->getSymbol() == 'k' && cells[i][j].getWhiteControl())) {
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+
+bool Board::canMove() {
+    for (int i=0; i<8; i++) {
+        for (int j=0; j<8; j++) {
+            if (cells[i][j].getContent() != nullptr && ((cells[i][j].getContent()->getColor() == "white" && turn) || (cells[i][j].getContent()->getColor() == "black" && !turn))) {
+                calcAvailableCells(cells[i][j].getName());
+                for (int k=0; k<cells[i][j].getContent()->getAvailableCells().size(); k++) {
+                    int row = findCell(cells[i][j].getContent()->getAvailableCells()[k]) / 10;
+                    int col = findCell(cells[i][j].getContent()->getAvailableCells()[k]) % 10;
+                    Piece* taken = cells[row][col].getContent();
+                    cells[row][col].setContent(cells[i][j].getContent());
+                    cells[i][j].setContent(nullptr);
+                    turn = !turn;
+                    calcControlledCells();
+                    bool result = isCheck();
+                    cells[i][j].setContent(cells[row][col].getContent());
+                    cells[row][col].setContent(taken);
+                    turn = !turn;
+                    if (!result) return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+
 void Board::checkLength(string cellName) const {
     if (cellName.size() != 2) throw CellNameException("does not match the length", cellName);
 }
@@ -389,7 +428,7 @@ void Board::checkMoveLegility(string cellName1, string cellName2) const {
     if (!exceptionChecker) throw MoveException("pieces do not move so", cellName1, cellName2, cells[row][col].getContent()->getSymbol());
 }
 
-void Board::checkCheck(string cellName1, string cellName2, bool isFirstMove) {
+void Board::checkCheck(string cellName1, string cellName2, bool isFirstMove, Piece* taken) {
     for (int i=0; i<8; i++) {
         for (int j=0; j<8; j++) {
             if (cells[i][j].getContent() != nullptr) {
@@ -401,7 +440,7 @@ void Board::checkCheck(string cellName1, string cellName2, bool isFirstMove) {
                     int col2 = findCell(cellName2) % 10;
                     cells[row2][col2].getContent()->setIsFirstMove(isFirstMove);
                     cells[row1][col1].setContent(cells[row2][col2].getContent());
-                    cells[row2][col2].setContent(nullptr);
+                    cells[row2][col2].setContent(taken);
                     turn = !turn;
                     throw MoveException("the king is in check", cellName1, cellName2, cells[row1][col1].getContent()->getSymbol());
                 }
@@ -412,6 +451,22 @@ void Board::checkCheck(string cellName1, string cellName2, bool isFirstMove) {
 
 void Board::checkEndGame(string cellName) {
     if (cellName == "e0") endGame = true;
+}
+
+void Board::checkMate() {
+    if (!canMove() && isCheck()) {
+        printBoard();
+        cout<<(turn ? "Black" : "White")<<" has won via a checkmate.\n";
+        endGame = true;
+    }
+}
+
+void Board::checkStalemate() {
+    if (!canMove() && !isCheck()) {
+        printBoard();
+        cout<<"Draw because of a stalemate.\n";
+        endGame = true;
+    }
 }
 
 void Board::printBoard() const {
@@ -473,12 +528,15 @@ void Board::makeMove() {
     int row2 = findCell(newCell) / 10;
     int col2 = findCell(newCell) % 10;
     bool isFirstMove = cells[row1][col1].getContent()->getIsFirstMove();
+    Piece* taken = cells[row2][col2].getContent();
     cells[row1][col1].getContent()->setIsFirstMove(false);
     cells[row2][col2].setContent(cells[row1][col1].getContent());
     cells[row1][col1].setContent(nullptr);
     turn = !turn;
     calcControlledCells();
-    checkCheck(oldCell, newCell, isFirstMove);
+    checkCheck(oldCell, newCell, isFirstMove, taken);
+    checkMate();
+    checkStalemate();
 }
 
 void Board::play() { 

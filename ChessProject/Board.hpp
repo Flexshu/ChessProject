@@ -21,6 +21,8 @@ public:
     void shootRay(int a, int b, int row, int col);
     void calcAvailableCells(string cellName) const;
     void calcControlledCells();
+    bool isCheck();
+    bool canMove();
     
     void checkLength(string cellName) const;
     void checkFirstSymbol(string cellName) const;
@@ -30,8 +32,10 @@ public:
     void checkSameColorness(string cellName) const;
     void checkSameCell(string cellName1, string cellName2) const;
     void checkMoveLegility(string cellName1, string cellName2) const;
-    void checkCheck(string cellName1, string cellName2, bool isFirstMove);
+    void checkCheck(string cellName1, string cellName2, bool isFirstMove, Piece* taken);
     void checkEndGame(string cellName);
+    void checkMate();
+    void checkStalemate();
     
     void printBoard() const;
     void makeMove();
