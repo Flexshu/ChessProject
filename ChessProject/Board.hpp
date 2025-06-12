@@ -22,6 +22,7 @@ class Board{
     bool isCheck();
     bool canMove();
     void clearEnPassant();
+    void cancelMove(string cellName1, string cellName2, bool isFirstMove, Piece* taken);
     
     void checkLength(string cellName) const;
     void checkFirstSymbol(string cellName) const;
@@ -34,6 +35,10 @@ class Board{
     void checkEnPassantAvailability(string cellName1, string cellName2);
     void checkEnPassantPlayed(string cellName);
     void checkCastlePlayed(string cellName1, string cellName2);
+    void checkPromotionLength(string entered, string cellName1, string cellName2, bool isFirstMove, Piece* taken);
+    void checkPromotionSymbol(string entered, string cellName1, string cellName2, bool isFirstMove, Piece* taken);
+    void checkPromotionPiece(string entered, string cellName1, string cellName2, bool isFirstMove, Piece* taken);
+    void checkPromotion(string cellName1, string cellName2, bool isFirstMove, Piece* taken);
     void checkCheck(string cellName1, string cellName2, bool isFirstMove, Piece* taken);
     void checkEndGame(string cellName);
     void checkMate();

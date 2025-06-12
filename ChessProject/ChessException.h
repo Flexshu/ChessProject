@@ -44,7 +44,7 @@ class MoveException : public ChessException{
     string type;
     
 public:
-    MoveException(string reason, string cellName1, string cellName2, char type) : ChessException(reason){
+    MoveException(string reason, string cellName1, string cellName2, char type) : ChessException(reason) {
         this->cellName1 = cellName1;
         this->cellName2 = cellName2;
         if (tolower(type) == 'n') this->type = "knight";
@@ -57,6 +57,19 @@ public:
     
     void printMessage() const override{
         cout<<"You can not move the "<<type<<" from "<<cellName1<<" to "<<cellName2<<": "<<reason<<".\n";
+    }
+};
+
+class PromotionException : public ChessException {
+    string entered;
+    
+public:
+    PromotionException(string reason, string entered) : ChessException(reason) {
+        this->entered = entered;
+    }
+    
+    void printMessage() const override {
+        cout<<"You can not enter '"<<entered<<"': "<<reason<<".\n";
     }
 };
 

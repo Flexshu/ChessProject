@@ -403,6 +403,17 @@ void Board::clearEnPassant() {
     }
 }
 
+void Board::cancelMove(string cellName1, string cellName2, bool isFirstMove, Piece *taken) {
+    int row1 = findCell(cellName1) / 10;
+    int col1 = findCell(cellName1) % 10;
+    int row2 = findCell(cellName2) / 10;
+    int col2 = findCell(cellName2) % 10;
+    cells[row2][col2].getContent()->setIsFirstMove(isFirstMove);
+    cells[row1][col1].setContent(cells[row2][col2].getContent());
+    cells[row2][col2].setContent(taken);
+    turn = !turn;
+}
+
 void Board::checkLength(string cellName) const {
     if (cellName.size() != 2) throw CellNameException("does not match the length", cellName);
 }
@@ -516,6 +527,56 @@ void Board::checkCastlePlayed(string cellName1, string cellName2) {
     }
 }
 
+void Board::checkPromotionLength(string entered, string cellName1, string cellName2, bool isFirstMove, Piece* taken) {
+    if (entered.length() != 1) {
+        cancelMove(cellName1, cellName2, isFirstMove, taken);
+        throw PromotionException("you should enter a symbol", entered);
+    }
+}
+
+void Board::checkPromotionSymbol(string entered, string cellName1, string cellName2, bool isFirstMove, Piece* taken) {
+    if (tolower(entered[0]) != 'q' && tolower(entered[0]) != 'k' && tolower(entered[0]) != 'r' && tolower(entered[0]) != 'b' && tolower(entered[0]) != 'n' && tolower(entered[0]) != 'p') {
+        cancelMove(cellName1, cellName2, isFirstMove, taken);
+        throw PromotionException("this symbol does not correspond to any piece", entered);
+    }
+}
+
+void Board::checkPromotionPiece(string entered, string cellName1, string cellName2, bool isFirstMove, Piece* taken) {
+    if (tolower(entered[0]) == 'p' || tolower(entered[0]) == 'k') {
+        cancelMove(cellName1, cellName2, isFirstMove, taken);
+        throw PromotionException("you can not promote to a king or a pawn", entered);
+    }
+}
+
+void Board::checkPromotion(string cellName1, string cellName2, bool isFirstMove, Piece* taken) {
+    int row = findCell(cellName2) / 10;
+    int col = findCell(cellName2) % 10;
+    if ((cells[row][col].getContent()->getSymbol() == 'P' && row == 0) || (cells[row][col].getContent()->getSymbol() == 'p' && row == 7)) {
+        string symbol = " ";
+        cout<<"Enter a piece's symbol you would like to promote your pawn to: ";
+        getline(cin, symbol);
+        checkPromotionLength(symbol, cellName1, cellName2, isFirstMove, taken);
+        checkPromotionSymbol(symbol, cellName1, cellName2, isFirstMove, taken);
+        checkPromotionPiece(symbol, cellName1, cellName2, isFirstMove, taken);
+        if (symbol[0] == 'q' || symbol[0] == 'Q') {
+            delete cells[row][col].getContent();
+            cells[row][col].setContent(new Queen(turn));
+        }
+        else if (symbol[0] == 'r' || symbol[0] == 'R') {
+            delete cells[row][col].getContent();
+            cells[row][col].setContent(new Rook(turn));
+        }
+        else if (symbol[0] == 'b' || symbol[0] == 'B') {
+            delete cells[row][col].getContent();
+            cells[row][col].setContent(new Bishop(turn));
+        }
+        else if (symbol[0] == 'n' || symbol[0] == 'N') {
+            delete cells[row][col].getContent();
+            cells[row][col].setContent(new Knight(turn));
+        }
+    }
+}
+
 void Board::checkCheck(string cellName1, string cellName2, bool isFirstMove, Piece* taken) {
     for (int i=0; i<8; i++) {
         for (int j=0; j<8; j++) {
@@ -524,12 +585,7 @@ void Board::checkCheck(string cellName1, string cellName2, bool isFirstMove, Pie
                     || (cells[i][j].getContent()->getSymbol() == 'k' && cells[i][j].getWhiteControl() && turn)) {
                     int row1 = findCell(cellName1) / 10;
                     int col1 = findCell(cellName1) % 10;
-                    int row2 = findCell(cellName2) / 10;
-                    int col2 = findCell(cellName2) % 10;
-                    cells[row2][col2].getContent()->setIsFirstMove(isFirstMove);
-                    cells[row1][col1].setContent(cells[row2][col2].getContent());
-                    cells[row2][col2].setContent(taken);
-                    turn = !turn;
+                    cancelMove(cellName1, cellName2, isFirstMove, taken);
                     throw MoveException("the king is in check", cellName1, cellName2, cells[row1][col1].getContent()->getSymbol());
                 }
             }
@@ -643,6 +699,7 @@ void Board::makeMove() {
     checkEnPassantAvailability(oldCell, newCell);
     calcControlledCells();
     checkCheck(oldCell, newCell, isFirstMove, taken);
+    checkPromotion(oldCell, newCell, isFirstMove, taken);
     checkMate();
     checkStalemate();
     delete taken;
@@ -657,6 +714,7 @@ int Board::play() {
         catch (CellNameException e) {e.printMessage();}
         catch (OptionException e) {e.printMessage();}
         catch (MoveException e) {e.printMessage();}
+        catch (PromotionException e) {e.printMessage();}
     } while (!endGame);
     return result;
 }
