@@ -37,11 +37,6 @@ Board::Board() {
     for (int i=0; i<8; i+=7) {
         cells[i][4].setContent(new King(i == 0));
     }
-    ofstream file("game.txt");
-    if (file.is_open()) {
-        file<<"Game "<<gameNumber<<endl;
-        file.close();
-    }
 }
 
 int Board::findCell(string cellName) const {

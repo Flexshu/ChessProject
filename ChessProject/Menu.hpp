@@ -14,6 +14,8 @@ public:
     Menu();
     
     void readStats();
+    void writeStats();
+    void clearStats();
     
     void openMenu();
 };

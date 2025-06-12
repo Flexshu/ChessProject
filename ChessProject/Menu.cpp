@@ -1,17 +1,52 @@
 #include "Menu.hpp"
 
-Menu::Menu() { 
+int findGameNumber(){
+    int result = 0;
+    ifstream file("gameStats.txt");
+    if (file.is_open()) {
+        file>>result;
+        file.close();
+    }
+    return result;
+}
+
+int Board::gameNumber = findGameNumber() + 1;
+
+Menu::Menu() {
     totalGames = 0;
     whiteVictories = 0;
     blackVictories = 0;
     draws = 0;
 }
 
-void Menu::readStats() { 
-    
+void Menu::readStats() {
+    ifstream file("gameStats.txt");
+    if (file.is_open()) {
+        file>>totalGames;
+        file>>whiteVictories;
+        file>>blackVictories;
+        file>>draws;
+        file.close();
+    }
 }
 
-void Menu::openMenu() { 
+void Menu::writeStats() {
+    ofstream file("gameStats.txt");
+    if (file.is_open()) {
+        file<<totalGames<<endl
+        <<whiteVictories<<endl
+        <<blackVictories<<endl
+        <<draws;
+        file.close();
+    }
+}
+
+void Menu::clearStats() {
+    *this = Menu();
+    writeStats();
+}
+
+void Menu::openMenu() {
     readStats();
     int menu = -1;
     do {
@@ -20,6 +55,7 @@ void Menu::openMenu() {
             <<"0. Exit.\n"
             <<"1. Play a new game.\n"
             <<"2. View statistics.\n"
+            <<"3. Clear statistics.\n"
             <<"Enter your choice: ";
             cin>>menu;
             cout<<endl;
@@ -39,8 +75,12 @@ void Menu::openMenu() {
                 <<"Black victories: "<<blackVictories<<".\n"
                 <<"Draws: "<<draws<<".\n";
             }
+            else if (menu == 3) {
+                clearStats();
+            }
             else throw MenuException(menu);
         }
         catch (MenuException e) {e.printMessage();}
     } while (menu != 0);
+    writeStats();
 }
