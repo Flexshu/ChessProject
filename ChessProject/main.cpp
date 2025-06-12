@@ -1,4 +1,4 @@
-#include "Board.hpp"
+#include "Menu.hpp"
 
 int findGameNumber(){
     int result = 0;
@@ -7,12 +7,8 @@ int findGameNumber(){
 
 int Board::gameNumber = findGameNumber() + 1;
 
-void clearFile(){
-    
-}
-
 int main(){
-    Board().play();
+    Menu().openMenu();
     
     return 0;
 }

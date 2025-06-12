@@ -3,6 +3,7 @@
 Board::Board() { 
     cells = vector<vector<Cell>>(8, vector<Cell>(8, Cell()));
     endGame = false;
+    result = -1;
     turn = 1;
     for (int i=0; i<8; i++) {
         for (int j=0; j<8; j++) {
@@ -195,10 +196,6 @@ void Board::calcAvailableCells(string cellName) const {
                 }
             }
         }
-        for (int i=0; i<availableCells.size(); i++) {
-            cout<<availableCells[i]<<" ";
-        }
-        cout<<endl;
     }
     else if (cells[row][col].getContent()->getSymbol() == 'P') {
         char c = char(cells[row][col].getName()[0]);
@@ -554,6 +551,7 @@ void Board::checkMate() {
         printBoard();
         cout<<(turn ? "Black" : "White")<<" has won via a checkmate.\n";
         endGame = true;
+        result = turn ? 2 : 1;
     }
 }
 
@@ -562,6 +560,7 @@ void Board::checkStalemate() {
         printBoard();
         cout<<"Draw because of a stalemate.\n";
         endGame = true;
+        result = 0;
     }
 }
 
@@ -654,7 +653,7 @@ void Board::makeMove() {
     delete taken;
 }
 
-void Board::play() { 
+int Board::play() {
     do {
         try {
             printBoard();
@@ -664,4 +663,5 @@ void Board::play() {
         catch (OptionException e) {e.printMessage();}
         catch (MoveException e) {e.printMessage();}
     } while (!endGame);
+    return result;
 }

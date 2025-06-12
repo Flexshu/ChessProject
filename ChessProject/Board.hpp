@@ -8,6 +8,8 @@ class Board{
     vector<vector<Cell>> cells;
     bool endGame;
     bool turn;
+    int result;
+    
     static int gameNumber;
     
     int findCell(string cellName) const;
@@ -43,7 +45,7 @@ class Board{
 public:
     Board();
     
-    void play();
+    int play();
 };
 
 #endif
