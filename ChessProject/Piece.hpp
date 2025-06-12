@@ -32,6 +32,7 @@ class Rook : public Piece{
 public:
     Rook(bool isBlack) : Piece(isBlack) {
         symbol = color == "white" ? 'R' : 'r';
+        isFirstMove = true;
     }
 };
 
@@ -60,6 +61,7 @@ class King : public Piece{
 public:
     King(bool isBlack) : Piece(isBlack) {
         symbol = color == "white" ? 'K' : 'k';
+        isFirstMove = true;
     }
 };
 

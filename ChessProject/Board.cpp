@@ -36,14 +36,11 @@ Board::Board() {
     for (int i=0; i<8; i+=7) {
         cells[i][4].setContent(new King(i == 0));
     }
-}
-
-void Board::setCell(int row, int col, Cell cell) {
-    cells[row][col] = cell;
-}
-
-Cell Board::getCell(int row, int col) const {
-    return cells[row][col];
+    ofstream file("game.txt");
+    if (file.is_open()) {
+        file<<"Game "<<gameNumber<<endl;
+        file.close();
+    }
 }
 
 int Board::findCell(string cellName) const {
@@ -160,6 +157,48 @@ void Board::calcAvailableCells(string cellName) const {
                 if (c >= 'a' && c <= 'h' && n >= 1 && n <= 8 && !isSameColored(row, col, row - j, col + i)) availableCells.push_back(string(1, c) + to_string(n));
             }
         }
+        if (cells[row][col].getContent()->getIsFirstMove()) {
+            if (cells[row][col + 3].getContent() != nullptr) {
+                if (cells[row][col + 3].getContent()->getIsFirstMove() && cells[row][col + 1].getContent() == nullptr && cells[row][col + 2].getContent() == nullptr) {
+                    if (cells[row][col].getContent()->getSymbol() == 'K') {
+                        if (!cells[row][col + 1].getBlackControl()) {
+                            char c = char(cells[row][col].getName()[0] + 2);
+                            int n = cells[row][col].getName()[1] - '0';
+                            availableCells.push_back(string(1, c) + to_string(n));
+                        }
+                    }
+                    else if (cells[row][col].getContent()->getSymbol() == 'k') {
+                        if (!cells[row][col + 1].getWhiteControl()) {
+                            char c = char(cells[row][col].getName()[0] + 2);
+                            int n = cells[row][col].getName()[1] - '0';
+                            availableCells.push_back(string(1, c) + to_string(n));
+                        }
+                    }
+                }
+            }
+            if (cells[row][col - 4].getContent() != nullptr) {
+                if (cells[row][col - 4].getContent()->getIsFirstMove() && cells[row][col - 1].getContent() == nullptr && cells[row][col - 2].getContent() == nullptr && cells[row][col - 3].getContent() == nullptr) {
+                    if (cells[row][col].getContent()->getSymbol() == 'K') {
+                        if (!cells[row][col - 1].getBlackControl()) {
+                            char c = char(cells[row][col].getName()[0] - 2);
+                            int n = cells[row][col].getName()[1] - '0';
+                            availableCells.push_back(string(1, c) + to_string(n));
+                        }
+                    }
+                    else if (cells[row][col].getContent()->getSymbol() == 'k') {
+                        if (!cells[row][col - 1].getWhiteControl()) {
+                            char c = char(cells[row][col].getName()[0] - 2);
+                            int n = cells[row][col].getName()[1] - '0';
+                            availableCells.push_back(string(1, c) + to_string(n));
+                        }
+                    }
+                }
+            }
+        }
+        for (int i=0; i<availableCells.size(); i++) {
+            cout<<availableCells[i]<<" ";
+        }
+        cout<<endl;
     }
     else if (cells[row][col].getContent()->getSymbol() == 'P') {
         char c = char(cells[row][col].getName()[0]);
@@ -466,6 +505,25 @@ void Board::checkEnPassantPlayed(string cellName) {
     }
 }
 
+void Board::checkCastlePlayed(string cellName1, string cellName2) {
+    int row1 = findCell(cellName1) / 10;
+    int col1 = findCell(cellName1) % 10;
+    int row2 = findCell(cellName2) / 10;
+    int col2 = findCell(cellName2) % 10;
+    if (tolower(cells[row2][col2].getContent()->getSymbol()) == 'k' && row1 == row2) {
+        if (col2 - col1 == 2) {
+            cells[row2][col2 + 1].getContent()->setIsFirstMove(false);
+            cells[row2][col2 - 1].setContent(cells[row2][col2 + 1].getContent());
+            cells[row2][col2 + 1].setContent(nullptr);
+        }
+        else if (col2 - col1 == -2) {
+            cells[row2][col2 - 2].getContent()->setIsFirstMove(false);
+            cells[row2][col2 + 1].setContent(cells[row2][col2 - 2].getContent());
+            cells[row2][col2 - 2].setContent(nullptr);
+        }
+    }
+}
+
 void Board::checkCheck(string cellName1, string cellName2, bool isFirstMove, Piece* taken) {
     for (int i=0; i<8; i++) {
         for (int j=0; j<8; j++) {
@@ -586,6 +644,7 @@ void Board::makeMove() {
     cells[row1][col1].setContent(nullptr);
     turn = !turn;
     checkEnPassantPlayed(newCell);
+    checkCastlePlayed(oldCell, newCell);
     clearEnPassant();
     checkEnPassantAvailability(oldCell, newCell);
     calcControlledCells();

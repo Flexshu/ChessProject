@@ -1,18 +1,14 @@
 #ifndef Board_hpp
 #define Board_hpp
 
+#include <fstream>
 #include "Cell.hpp"
 
 class Board{
     vector<vector<Cell>> cells;
     bool endGame;
     bool turn;
-    
-public:
-    Board();
-    
-    void setCell(int row, int col, Cell cell);
-    Cell getCell(int row, int col) const;
+    static int gameNumber;
     
     int findCell(string cellName) const;
     bool isSameColored(int row1, int col1, int row2, int col2) const;
@@ -34,7 +30,8 @@ public:
     void checkSameCell(string cellName1, string cellName2) const;
     void checkMoveLegility(string cellName1, string cellName2) const;
     void checkEnPassantAvailability(string cellName1, string cellName2);
-    void checkEnPassantPlayed(string cellName1);
+    void checkEnPassantPlayed(string cellName);
+    void checkCastlePlayed(string cellName1, string cellName2);
     void checkCheck(string cellName1, string cellName2, bool isFirstMove, Piece* taken);
     void checkEndGame(string cellName);
     void checkMate();
@@ -42,6 +39,10 @@ public:
     
     void printBoard() const;
     void makeMove();
+    
+public:
+    Board();
+    
     void play();
 };
 
