@@ -12,14 +12,14 @@ int findGameNumber(){
 
 int Board::gameNumber = findGameNumber() + 1;
 
-Menu::Menu() {
+Menu::Menu::Menu() {
     totalGames = 0;
     whiteVictories = 0;
     blackVictories = 0;
     draws = 0;
 }
 
-void Menu::readStats() {
+void Menu::Menu::readStats() {
     ifstream file("gameStats.txt");
     if (file.is_open()) {
         file>>totalGames;
@@ -30,7 +30,7 @@ void Menu::readStats() {
     }
 }
 
-void Menu::writeStats() {
+void Menu::Menu::writeStats() {
     ofstream file("gameStats.txt");
     if (file.is_open()) {
         file<<totalGames<<endl
@@ -41,12 +41,12 @@ void Menu::writeStats() {
     }
 }
 
-void Menu::clearStats() {
+void Menu::Menu::clearStats() {
     *this = Menu();
     writeStats();
 }
 
-void Menu::openMenu() {
+void Menu::Menu::openMenu() {
     readStats();
     int menu = -1;
     do {

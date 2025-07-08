@@ -4,6 +4,7 @@
 #include "Board.hpp"
 #include "MenuException.h"
 
+namespace Menu{
 class Menu{
     int totalGames;
     int whiteVictories;
@@ -19,5 +20,6 @@ public:
     
     void openMenu();
 };
+}
 
 #endif

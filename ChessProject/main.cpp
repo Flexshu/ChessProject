@@ -1,7 +1,7 @@
 #include "Menu.hpp"
 
 int main(){
-    Menu().openMenu();
+    Menu::Menu().openMenu();
     
     return 0;
 }
